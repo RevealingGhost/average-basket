@@ -198,6 +198,16 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
   .bk-kpi, .bk-insight, .bk-chip { transition: border-color var(--cds-dur-slow) var(--cds-ease-out), background var(--cds-dur-slow) var(--cds-ease-out); }
 }
 
+/* magyarázó buborék */
+.bk-help-t { cursor: help; text-decoration: underline dotted; text-decoration-color: var(--cds-chart-axis); text-decoration-thickness: 1px; text-underline-offset: 0.25em; }
+.bk-help-t:hover, .bk-help-t:focus-visible { text-decoration-color: var(--color-fg); }
+.bk-helppop { position: absolute; z-index: 6; width: min(28rem, 100%); pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: 0.45rem; font-size: var(--cds-font-size-body); line-height: 1.5; color: var(--color-fg); font-weight: 400; text-align: left; }
+.bk-helppop[hidden] { display: none; }
+.bk-help-h { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
+.bk-help-li { padding-left: 0.75rem; border-left: 2px solid var(--color-border-line); }
+.bk-help-term { font-weight: var(--cds-font-weight-medium); }
+.bk-help-n { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+
 </style>
 </head>
 <body>
@@ -223,18 +233,18 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
     <div class="bk-layout">
       <div class="bk-main">
         <div class="bk-kpis" id="ex-kpis">
-          <button type="button" class="bk-kpi" data-k="revenue"><span class="bk-kpi-l">Forgalom</span><span class="bk-kpi-v" data-source="metrics" data-field="revenue">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="revenue_chg">—</span><span class="bk-kpi-s"></span></span></button>
-          <button type="button" class="bk-kpi" data-k="trx"><span class="bk-kpi-l">Tranzakció</span><span class="bk-kpi-v" data-source="metrics" data-field="trx">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="trx_chg">—</span><span class="bk-kpi-s"></span></span></button>
-          <button type="button" class="bk-kpi" data-k="atv"><span class="bk-kpi-l">Átlagos kosárérték</span><span class="bk-kpi-v" data-source="metrics" data-field="atv">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="atv_chg">—</span><span class="bk-kpi-s"></span></span></button>
-          <button type="button" class="bk-kpi" data-k="ipt"><span class="bk-kpi-l">Tétel / tranzakció</span><span class="bk-kpi-v" data-source="metrics" data-field="ipt">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="ipt_chg">—</span><span class="bk-kpi-s"></span></span></button>
-          <button type="button" class="bk-kpi" data-k="price"><span class="bk-kpi-l">Átlagár / tétel</span><span class="bk-kpi-v" data-source="metrics" data-field="price">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="price_chg">—</span><span class="bk-kpi-s"></span></span></button>
+          <button type="button" class="bk-kpi" data-k="revenue"><span class="bk-kpi-l"><span class="bk-help-t" data-help="kpi-revenue">Forgalom</span></span><span class="bk-kpi-v" data-source="metrics" data-field="revenue">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="revenue_chg">—</span><span class="bk-kpi-s"></span></span></button>
+          <button type="button" class="bk-kpi" data-k="trx"><span class="bk-kpi-l"><span class="bk-help-t" data-help="kpi-trx">Tranzakció</span></span><span class="bk-kpi-v" data-source="metrics" data-field="trx">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="trx_chg">—</span><span class="bk-kpi-s"></span></span></button>
+          <button type="button" class="bk-kpi" data-k="atv"><span class="bk-kpi-l"><span class="bk-help-t" data-help="kpi-atv">Átlagos kosárérték</span></span><span class="bk-kpi-v" data-source="metrics" data-field="atv">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="atv_chg">—</span><span class="bk-kpi-s"></span></span></button>
+          <button type="button" class="bk-kpi" data-k="ipt"><span class="bk-kpi-l"><span class="bk-help-t" data-help="kpi-ipt">Tétel / tranzakció</span></span><span class="bk-kpi-v" data-source="metrics" data-field="ipt">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="ipt_chg">—</span><span class="bk-kpi-s"></span></span></button>
+          <button type="button" class="bk-kpi" data-k="price"><span class="bk-kpi-l"><span class="bk-help-t" data-help="kpi-price">Átlagár / tétel</span></span><span class="bk-kpi-v" data-source="metrics" data-field="price">—</span><span class="bk-kpi-d"><span class="bk-d" data-source="metrics" data-field="price_chg">—</span><span class="bk-kpi-s"></span></span></button>
         </div>
 
         <div class="bk-notes" id="ex-notes" aria-label="Fő megállapítások"></div>
 
         <article class="bk-card" id="ex-bridge-card">
           <header class="bk-card-h">
-            <div><h2>Forgalmi híd kosárméretenként</h2><p class="bk-note">Előző évi és idei forgalom, M Ft. A tengely nem nulláról indul. Kattints egy oszlopra a részletekért.</p></div>
+            <div><h2><span class="bk-help-t" data-help="ex-bridge" tabindex="0">Forgalmi híd kosárméretenként</span></h2><p class="bk-note">Előző évi és idei forgalom, M Ft. A tengely nem nulláról indul. Kattints egy oszlopra a részletekért.</p></div>
             <div class="bk-seg" id="ex-wf-mode" role="group" aria-label="Értékek megjelenítése">
               <button type="button" data-mode="abs" aria-pressed="true">M Ft</button>
               <button type="button" data-mode="pct" aria-pressed="false">Hozzájárulás (pp)</button>
@@ -246,7 +256,7 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
         <div class="bk-grid2">
           <article class="bk-card" id="ex-mix-card">
             <header class="bk-card-h">
-              <div><h2>Mekkora a kosarak súlya?</h2><p class="bk-note">Részesedés a tranzakciókból és a forgalomból.</p></div>
+              <div><h2><span class="bk-help-t" data-help="ex-mix" tabindex="0">Mekkora a kosarak súlya?</span></h2><p class="bk-note">Részesedés a tranzakciókból és a forgalomból.</p></div>
               <label class="bk-switch"><input type="checkbox" id="ex-mixprev"><span>Előző év</span></label>
             </header>
             <div class="bk-chart" id="ex-mix" data-source="metrics"></div>
@@ -254,7 +264,7 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
           </article>
           <article class="bk-card" id="ex-eff-card">
             <header class="bk-card-h">
-              <div><h2>Mi mozgatta a forgalmat?</h2><p class="bk-note">Forgalomváltozás három hatásra bontva, M Ft. A gombokkal hatásokat kapcsolhatsz ki.</p></div>
+              <div><h2><span class="bk-help-t" data-help="ex-eff" tabindex="0">Mi mozgatta a forgalmat?</span></h2><p class="bk-note">Forgalomváltozás három hatásra bontva, M Ft. A gombokkal hatásokat kapcsolhatsz ki.</p></div>
             </header>
             <div class="bk-chips" id="ex-eff-chips"></div>
             <div class="bk-chart" id="ex-eff" data-source="metrics"></div>
@@ -263,7 +273,7 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
 
         <article class="bk-card" id="ex-tm-card">
           <header class="bk-card-h">
-            <div><h2>Kosárméretek súlya</h2><p class="bk-note">A mezők területe a kiválasztott mutató részesedése. Kattints egy mezőre a részletekért.</p></div>
+            <div><h2><span class="bk-help-t" data-help="ex-tm" tabindex="0">Kosárméretek súlya</span></h2><p class="bk-note">A mezők területe a kiválasztott mutató részesedése. Kattints egy mezőre a részletekért.</p></div>
             <div class="bk-ctls">
               <div class="bk-seg" id="ex-tm-size" role="group" aria-label="Méret">
                 <button type="button" data-size="revenue" aria-pressed="true">Forgalom</button>
@@ -279,7 +289,7 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
         </article>
 
         <article class="bk-card" id="ex-table-card">
-          <header class="bk-card-h"><div><h2>Kosárméretek áttekintése</h2><p class="bk-note">Kattints egy sorra a részletezőhöz.</p></div></header>
+          <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="ex-table" tabindex="0">Kosárméretek áttekintése</span></h2><p class="bk-note">Kattints egy sorra a részletezőhöz.</p></div></header>
           <div class="bk-tablewrap"><table class="bk-tbl" id="ex-table"></table></div>
         </article>
       </div>
@@ -290,8 +300,8 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
   <!-- ===== Részletes nézet ===== -->
   <section id="page-detail" class="bk-page" role="tabpanel" aria-labelledby="tab-detail" hidden>
     <div class="bk-toolbar">
-      <label class="bk-field"><span>Mutató</span><select id="dt-metric" aria-label="Mutató"></select></label>
-      <div class="bk-field"><span>Nézet</span>
+      <label class="bk-field"><span class="bk-help-t" data-help="dt-metric" tabindex="0">Mutató</span><select id="dt-metric" aria-label="Mutató"></select></label>
+      <div class="bk-field"><span class="bk-help-t" data-help="dt-view" tabindex="0">Nézet</span>
         <div class="bk-seg" id="dt-view" role="group" aria-label="Nézet">
           <button type="button" data-view="value" aria-pressed="true">Érték</button>
           <button type="button" data-view="index" aria-pressed="false">Index</button>
@@ -305,26 +315,26 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
     <div class="bk-layout">
       <div class="bk-main">
         <article class="bk-card">
-          <header class="bk-card-h"><div><h2 id="dt-bars-title">Összehasonlítás</h2><p class="bk-note" id="dt-bars-note"></p></div></header>
+          <header class="bk-card-h"><div><h2><span id="dt-bars-title" class="bk-help-t" data-help="dt-bars" tabindex="0">Összehasonlítás</span></h2><p class="bk-note" id="dt-bars-note"></p></div></header>
           <div class="bk-chart" id="dt-bars" data-source="metrics"></div>
         </article>
         <div class="bk-grid2">
           <article class="bk-card">
-            <header class="bk-card-h"><div><h2>Vásárlásszám vs. kosárérték</h2><p class="bk-note">Buborék mérete: forgalom. A bal alsó negyed a legrosszabb.</p></div></header>
+            <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="dt-matrix" tabindex="0">Vásárlásszám vs. kosárérték</span></h2><p class="bk-note">Buborék mérete: forgalom. A bal alsó negyed a legrosszabb.</p></div></header>
             <div class="bk-chart" id="dt-matrix" data-source="metrics"></div>
           </article>
           <article class="bk-card">
-            <header class="bk-card-h"><div><h2>Hatásbontás</h2><p class="bk-note">M Ft, kapcsolható hatásokkal.</p></div></header>
+            <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="dt-eff" tabindex="0">Hatásbontás</span></h2><p class="bk-note">M Ft, kapcsolható hatásokkal.</p></div></header>
             <div class="bk-chips" id="dt-eff-chips"></div>
             <div class="bk-chart" id="dt-eff" data-source="metrics"></div>
           </article>
         </div>
         <article class="bk-card">
-          <header class="bk-card-h"><div><h2>Súlyeltolódás</h2><p class="bk-note">Részesedés változása az előző évhez képest, százalékpont.</p></div></header>
+          <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="dt-share" tabindex="0">Súlyeltolódás</span></h2><p class="bk-note">Részesedés változása az előző évhez képest, százalékpont.</p></div></header>
           <div class="bk-chart" id="dt-share" data-source="metrics"></div>
         </article>
         <article class="bk-card">
-          <header class="bk-card-h"><div><h2>Részletes tábla</h2><p class="bk-note">Fejlécre kattintva rendezhetsz; az oszlopcsoportokat ki-be kapcsolhatod. Az összesen sor mindig az összes kosárra vonatkozik.</p></div></header>
+          <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="dt-table" tabindex="0">Részletes tábla</span></h2><p class="bk-note">Fejlécre kattintva rendezhetsz; az oszlopcsoportokat ki-be kapcsolhatod. Az összesen sor mindig az összes kosárra vonatkozik.</p></div></header>
           <div class="bk-chips" id="dt-cols"></div>
           <div class="bk-tablewrap"><table class="bk-tbl" id="dt-table"></table></div>
         </article>
@@ -337,7 +347,7 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
   <section id="page-quality" class="bk-page" role="tabpanel" aria-labelledby="tab-quality" hidden>
     <div class="bk-qgrid">
       <article class="bk-card">
-        <header class="bk-card-h"><div><h2>Adatstruktúra</h2><p class="bk-note">A dashboard egyetlen nyers táblából számol. Minden mutató (átlagkosár, tétel/tranzakció, átlagár, változások, hatásbontás) ebből származik.</p></div></header>
+        <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="q-struct" tabindex="0">Adatstruktúra</span></h2><p class="bk-note">A dashboard egyetlen nyers táblából számol. Minden mutató (átlagkosár, tétel/tranzakció, átlagár, változások, hatásbontás) ebből származik.</p></div></header>
         <div class="bk-tablewrap"><table class="bk-tbl bk-spec">
           <thead><tr><th>Oszlop</th><th>Tartalom</th><th>Példa</th></tr></thead>
           <tbody>
@@ -352,17 +362,18 @@ th[aria-sort="descending"] .bk-th::after { content: " ↓"; }
       </article>
 
       <article class="bk-card" id="q-recon-card">
-        <header class="bk-card-h"><div><h2>Egyeztetés az eredeti összesítő táblával</h2><p class="bk-note" id="q-recon-note"></p></div></header>
+        <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="q-recon" tabindex="0">Egyeztetés az eredeti összesítő táblával</span></h2><p class="bk-note" id="q-recon-note"></p></div></header>
         <div class="bk-tablewrap" id="q-recon" data-source="recon"></div>
       </article>
 
       <article class="bk-card">
-        <header class="bk-card-h"><div><h2>Javaslatok a jobb döntéshozatalhoz</h2><p class="bk-note">Amit az adatstruktúra jelenleg nem tud megmutatni, és amivel a következő verzió erősebb lenne.</p></div></header>
+        <header class="bk-card-h"><div><h2><span class="bk-help-t" data-help="q-finds" tabindex="0">Javaslatok a jobb döntéshozatalhoz</span></h2><p class="bk-note">Amit az adatstruktúra jelenleg nem tud megmutatni, és amivel a következő verzió erősebb lenne.</p></div></header>
         <div class="bk-finds" id="q-finds"></div>
       </article>
     </div>
   </section>
 
+  <div class="bk-helppop" id="bk-help" role="tooltip" hidden></div>
   <div class="bk-tip" id="bk-tip" hidden></div>
 </div>
 
@@ -659,26 +670,33 @@ dash.calc('recon', {
     const shareTrx = two.reduce((a, x) => a + x.trx_share, 0);
     out.push({
       pick: two[0].segment,
-      k: 'Koncentráció',
+      k: 'Koncentráció', help: 'ins-conc',
       t: 'Az ' + two.map((x) => x.segment).join(' és ') + ' kosár a tranzakciók ' + fmt.pctu(shareTrx) + '-át adja, de a forgalom változásának ' + fmt.pct0(shareDecl) + '-át.',
     });
     if (t.atv_mix !== null) {
       out.push({
         pick: TOT,
-        k: 'Kosárérték',
+        k: 'Kosárérték', help: 'ins-atv',
         t: 'A tranzakciószám ' + fmt.pct(t.trx_chg) + ', a forgalom ' + fmt.pct(t.revenue_chg) + '. Az átlagkosár ' + fmt.sft(t.atv - t.p_atv) + ': ebből ' + fmt.sft(t.atv_mix) + ' a mix (több kis kosár), ' + fmt.sft(t.atv_within) + ' a kosarakon belüli változás.',
       });
     }
     const lowP = segs.slice().sort((a, b) => a.price_chg - b.price_chg)[0];
     out.push({
       pick: lowP.segment,
-      k: 'Átlagár',
+      k: 'Átlagár', help: 'ins-price',
       t: 'Az átlagár összesen ' + fmt.pct(t.price_chg) + '. A leggyengébb: ' + lowP.segment + ' kosár (' + fmt.pct(lowP.price_chg) + '). Az adatból nem látszik, hogy akció vagy termékmix áll mögötte.',
     });
     return out;
   };
 
   // ---------- részletező panel ----------
+  const hd = (txt, key) => {
+    const d = h('div', 'bk-dr-h');
+    const sp = h('span', 'bk-help-t', txt);
+    sp.dataset.help = key; sp.tabIndex = 0;
+    d.appendChild(sp);
+    return d;
+  };
   function drawer(el) {
     if (!el) return;
     el.replaceChildren();
@@ -687,7 +705,11 @@ dash.calc('recon', {
     if (!r) return;
     const head = h('div', 'bk-dr-head');
     head.appendChild(h('div', 'bk-eyebrow', 'Részletező'));
-    head.appendChild(h('h3', 'bk-dr-title', BK.name(r.segment)));
+    const ttl = h('h3', 'bk-dr-title');
+    const tsp = h('span', 'bk-help-t', BK.name(r.segment));
+    tsp.dataset.help = 'dr-main'; tsp.tabIndex = 0;
+    ttl.appendChild(tsp);
+    head.appendChild(ttl);
     head.appendChild(h('div', 'bk-sub', r.prev_period ? plong(r.period) + ' · előző év: ' + plong(r.prev_period) : plong(r.period)));
     el.appendChild(head);
     const chips = h('div', 'bk-chips');
@@ -704,7 +726,7 @@ dash.calc('recon', {
 
     // összehasonlító sávok
     const sec = h('div', 'bk-dr-sec');
-    sec.appendChild(h('div', 'bk-dr-h', 'Előző év vs. most'));
+    sec.appendChild(hd('Előző év vs. most', 'dr-cmp'));
     ['revenue', 'trx', 'atv', 'ipt', 'price'].forEach((k) => {
       const m = BK.metric(k);
       const cur = r[k], prv = r[m.p];
@@ -727,7 +749,7 @@ dash.calc('recon', {
     // hatásbontás
     if (r.eff_trx !== null) {
       const es = h('div', 'bk-dr-sec');
-      es.appendChild(h('div', 'bk-dr-h', 'Mi okozta a forgalomváltozást?'));
+      es.appendChild(hd('Mi okozta a forgalomváltozást?', 'dr-eff'));
       const mx = Math.max(...EFFECTS.map((e) => Math.abs(r[e.k]))) || 1;
       EFFECTS.forEach((e) => {
         const row = h('div', 'bk-eff');
@@ -749,7 +771,7 @@ dash.calc('recon', {
     // részesedés / átlagkosár-híd
     const ss = h('div', 'bk-dr-sec');
     if (r.segment !== TOT && r.p_rev_share !== null) {
-      ss.appendChild(h('div', 'bk-dr-h', 'Súly az egészben'));
+      ss.appendChild(hd('Súly az egészben', 'dr-share'));
       [['Tranzakció-részesedés', r.p_trx_share, r.trx_share], ['Forgalom-részesedés', r.p_rev_share, r.rev_share]].forEach((x) => {
         const row = h('div', 'bk-kv');
         row.appendChild(h('span', '', x[0]));
@@ -758,7 +780,7 @@ dash.calc('recon', {
       });
       el.appendChild(ss);
     } else if (r.segment === TOT && r.atv_mix !== null) {
-      ss.appendChild(h('div', 'bk-dr-h', 'Átlagkosár-változás bontása'));
+      ss.appendChild(hd('Átlagkosár-változás bontása', 'dr-atv'));
       [['Mix (kosárméret-arányok)', r.atv_mix], ['Kosarakon belül', r.atv_within], ['Összesen', r.atv - r.p_atv]].forEach((x) => {
         const row = h('div', 'bk-kv');
         row.appendChild(h('span', '', x[0]));
@@ -823,6 +845,106 @@ dash.calc('recon', {
     BK.tip.hide();
     BK.redraw();
   };
+})();
+
+</script>
+<script>
+// Magyarázó buborékok: a [data-help] címek fölé víve (vagy billentyűvel rájuk lépve) jelennek meg.
+(function () {
+  const BK = window.BK, h = BK.h;
+  const EFF_LIST = [
+    ['Tranzakciószám', 'több vagy kevesebb vásárlási alkalom (blokk).'],
+    ['Tétel / tranzakció', 'hány tétel kerül egy kosárba: a kosár „mélysége” darabszámban.'],
+    ['Átlagár', 'egy tétel átlagos ára: az árazás és a termékmix (drágább vagy olcsóbb termékek aránya) együtt.'],
+  ];
+  const HELP = {
+    // ---- KPI ----
+    'kpi-revenue': { t: 'Forgalom', p: ['A kiválasztott hónap teljes forgalma, az összes kosárméret együtt, a forrásfájl szerinti forintértékben. A forrás nem jelzi, hogy bruttó (ÁFA-val) vagy nettó érték.', 'Alatta az első szám az éves változás százalékban (az előző év azonos hónapjához képest), utána ugyanez millió forintban. Zöld: növekedés, piros: csökkenés.'] },
+    'kpi-trx': { t: 'Tranzakció', p: ['A blokkok, vagyis a vásárlási alkalmak száma a hónapban. Ez a forgalom „hányszor vásároltak” oldala: ha csökken, kevesebb alkalommal jöttek vásárolni (vagy kevesebb vásárló jött).', 'Alatta az éves változás és az előző évi érték.'] },
+    'kpi-atv': { t: 'Átlagos kosárérték', p: ['Egy tranzakcióra jutó forgalom: forgalom ÷ tranzakciók száma.', 'Az összesített átlagot két dolog mozgatja: az egyes kosárméreteken belüli költés, és a kosárméretek aránya (mix). Ha nő a kis kosarak aránya, az átlag akkor is csökken, ha egyik kosárméreten belül sem változik semmi. A két hatás szétbontása a „Kosárérték” megállapításban és a részletezőben látható.'] },
+    'kpi-ipt': { t: 'Tétel / tranzakció', p: ['Egy blokkra jutó eladott tételek átlagos száma: tételek ÷ tranzakciók. Azt mutatja, mennyire „mély” egy kosár darabszámban.', 'A forrás nem jelzi, hogy a mérlegelt áru (pl. zöldség, hús) darabként vagy más egységben szerepel, ez torzíthatja az értéket.'] },
+    'kpi-price': { t: 'Átlagár / tétel', p: ['Egy eladott tétel átlagára: forgalom ÷ tételek száma.', 'Nem azonos az árszínvonal-változással vagy az inflációval: a termékmix is mozgatja. Ha a vásárlók olcsóbb termékek felé tolódnak, az átlagár akkor is csökken, ha egyetlen termék ára sem változott.'] },
+    // ---- megállapítások ----
+    'ins-conc': { t: 'Koncentráció', p: ['A két legnagyobb forgalomváltozást okozó kosárméretet emeli ki. Az első szám azt mutatja, hogy ezek a tranzakciók mekkora részét adják, a második azt, hogy a teljes forgalomváltozás mekkora része jön tőlük.', 'Ha a második szám jóval nagyobb az elsőnél, a változás kevés, de nagy értékű vásárlásban koncentrálódik: ott érdemes a beavatkozást keresni. Kattintásra a részletező erre a kosárméretre vált.'] },
+    'ins-atv': { t: 'Kosárérték', p: ['Az átlagos kosárérték változását két részre bontja:'], l: [['Mix', 'mennyit változott volna az átlag pusztán attól, hogy a kosárméretek aránya eltolódott (a tavalyi kosárértékekkel számolva).'], ['Kosarakon belül', 'mennyit változott az egyes kosárméreteken belüli átlagos költés (az idei arányokkal súlyozva).']], n: 'A két rész összege pontosan a teljes változás.' },
+    'ins-price': { t: 'Átlagár', p: ['Az összes tételre vetített átlagár éves változása, és az a kosárméret, ahol a legjobban csökkent.', 'Az adatból nem dönthető el, hogy árcsökkentés, akció vagy az olcsóbb termékek felé tolódás okozta: ehhez termék- vagy kategóriaszintű adat kellene. Kattintásra a részletező erre a kosárméretre vált.'] },
+    // ---- vezetői diagramok ----
+    'ex-bridge': { t: 'Forgalmi híd kosárméretenként', p: ['Vízesés-diagram. Bal oldalt az előző év azonos hónapjának teljes forgalma, jobb oldalt az idei. A kettő közötti oszlopok azt mutatják, mennyivel változott az egyes kosárméretek forgalma (piros: csökkenés, zöld: növekedés). A közbenső oszlopok összege pontosan a két végösszeg különbsége.', 'Az oszlopok alatti százalék az adott kosárméret saját éves változása.'], l: [['M Ft', 'a változás millió forintban.'], ['Hozzájárulás (pp)', 'a változás az előző évi teljes forgalom százalékpontjában: hány százalékponttal húzta le vagy fel az adott kosárméret a teljes forgalom változását. Ezek összege a teljes forgalom százalékos változása.']], n: 'A függőleges tengely nem nulláról indul, hogy a változások láthatók legyenek, ezért a végösszeg-oszlopok magassága nem arányos a forgalommal.' },
+    'ex-mix': { t: 'Mekkora a kosarak súlya?', p: ['Két 100%-os sáv. A felső azt mutatja, hogy a tranzakciók (vásárlási alkalmak) hány százaléka esik az egyes kosárméretekre, az alsó azt, hogy a forgalom hány százaléka.', 'A kettő összevetése a lényeg: a kis kosarak adják a vásárlási alkalmak nagy részét, de a forgalomnak csak kisebb hányadát, a nagy kosaraknál fordított a helyzet. Ezért egy kis arányú, de nagy értékű kosárméret visszaesése is erősen érződik a forgalmon.', 'Az „Előző év” kapcsolóval a tavalyi arányok is megjelennek halványabban, így az eltolódás közvetlenül összevethető. A pontos változás százalékpontban a „Súlyeltolódás” csempén látszik.'] },
+    'ex-eff': { t: 'Mi mozgatta a forgalmat?', p: ['A forgalom három tényező szorzata: tranzakciók száma × tétel/tranzakció × átlagár. Minden sor az adott kosárméret forgalomváltozását bontja e három hatásra, millió forintban:'], l: EFF_LIST, n: 'Jobbra a pozitív, balra a negatív hatások állnak, a sor végén az összegük. A bontás logaritmikus (LMDI) módszerrel készül: a három hatás összege mindig pontosan a teljes változás, és nem függ a számítás sorrendjétől. A gombokkal egy-egy hatás kikapcsolható, ilyenkor a sor végi összeg csak a bekapcsolt hatásokat tartalmazza.' },
+    'ex-tm': { t: 'Kosárméretek súlya', p: ['Treemap: minden téglalap egy kosárméret, a területe arányos a kiválasztott mutatóval. A téglalapban a részesedés, az érték és az éves változás áll (ha elfér).'], l: [['Forgalom / Tranzakció', 'mi határozza meg a téglalapok méretét.'], ['Kosárméret', 'a kosárméretek saját azonosító színe.'], ['Éves változás', 'piros: csökkenés, zöld: növekedés. Minél erősebb a szín, annál nagyobb a változás (tíz százalék körül telítődik).']], n: 'A két méretmód közti váltás jól mutatja, hogy a tranzakciókban domináns kosárméret a forgalomban mekkora.' },
+    'ex-table': { t: 'Kosárméretek áttekintése', p: ['Kosárméretenként a fő számok egy helyen, az utolsó sorban az összes kosár.'], l: [['Forgalom', 'az idei havi forgalom.'], ['Változás', 'eltérés az előző év azonos hónapjától, millió forintban.'], ['Forgalom %', 'éves változás százalékban.'], ['Tranzakció %, Tétel/trx %, Átlagár %', 'a forgalom három tényezőjének éves változása.']], n: 'A forgalom % e három tényező együttes eredménye: (1 + tranzakció%) × (1 + tétel/trx%) × (1 + átlagár%) − 1. Egy sorra kattintva a részletező arra a kosárméretre vált.' },
+    // ---- részletes nézet ----
+    'dt-metric': { t: 'Mutató', p: ['Melyik mutatót mutassa az összehasonlító oszlopdiagram:'], l: [['Forgalom', 'havi forgalom.'], ['Tranzakció', 'vásárlási alkalmak (blokkok) száma.'], ['Eladott tétel', 'eladott tételek száma.'], ['Átlagos kosárérték', 'forgalom ÷ tranzakciók.'], ['Tétel / tranzakció', 'tételek ÷ tranzakciók.'], ['Átlagár / tétel', 'forgalom ÷ tételek.']] },
+    'dt-view': { t: 'Nézet', l: [['Érték', 'az idei és (ha be van kapcsolva) az előző évi abszolút érték.'], ['Index', 'az idei érték az előző év százalékában. Előző év = 100, tehát 95 azt jelenti, hogy 5%-kal kevesebb.'], ['Éves változás', 'százalékos változás az előző év azonos hónapjához képest.']], n: 'Az index és az éves változás ugyanazt mutatja két skálán: index − 100 = változás százalékban.' },
+    'dt-bars': { t: 'Összehasonlítás kosárméretenként', p: ['A kiválasztott mutató kosárméretenként. Érték nézetben a halvány oszlop az előző év, a teli az idei, alatta az éves változás.', 'Index és Éves változás nézetben a szaggatott vonal az összes kosár együttes értéke: ami alatta marad, az átlagnál rosszabbul teljesített.'], n: 'Az arány típusú mutatóknál (kosárérték, tétel/tranzakció, átlagár) az „Összesen” nem a kosárméretek egyszerű átlaga, hanem a teljes forgalomból számolt hányados, ezért a mix is befolyásolja.' },
+    'dt-matrix': { t: 'Vásárlásszám vs. kosárérték', p: ['Minden buborék egy kosárméret. Vízszintesen a tranzakciószám éves változása (annyiszor vásárolnak-e), függőlegesen az átlagos kosárérték éves változása (annyit költenek-e alkalmanként). A buborék mérete az idei forgalommal arányos, a rombusz az összes kosár együtt.'], l: [['Jobb felső negyed', 'több vásárlás és nagyobb kosár.'], ['Bal felső negyed', 'kevesebb vásárlás, de nagyobb kosár.'], ['Jobb alsó negyed', 'több vásárlás, de kisebb kosár.'], ['Bal alsó negyed', 'kevesebb vásárlás és kisebb kosár: a legkedvezőtlenebb.']], n: 'Egy kosárméreten belül a kosárérték csak szűk sávban mozoghat, mert a kategória határai behatárolják. Ezért a nagy elmozdulás jellemzően a vízszintes tengelyen látszik.' },
+    'dt-eff': { t: 'Hatásbontás', p: ['Ugyanaz a bontás, mint a vezetői nézetben: minden sor a kosárméret forgalomváltozását bontja három hatásra, millió forintban:'], l: EFF_LIST, n: 'A felső „Kosárméretek” szűrő itt is érvényes, az Összesen sor viszont mindig mind az öt kosárméretre vonatkozik. A három hatás összege pontosan a teljes változás (LMDI-bontás).' },
+    'dt-share': { t: 'Súlyeltolódás', p: ['Azt mutatja, hogyan változott az egyes kosárméretek súlya (részesedése) az összesen belül az előző év azonos hónapjához képest, százalékpontban (pp). Kosárméretenként két sáv:'], l: [['Tranzakció-részesedés', 'a vásárlási alkalmak hány százaléka esik erre a kosárméretre.'], ['Forgalom-részesedés', 'a teljes forgalom hány százaléka jön ebből a kosárméretből.'], ['Példa', 'ha egy kosárméret tavaly a forgalom 20,0%-át, idén 19,0%-át adta, a sáv −1,0 pp.']], n: 'A részesedések összege mindig 100%, ezért a pozitív és negatív eltolódások kiegyenlítik egymást. A részesedés akkor is nőhet, ha az adott kosárméret forgalma csökkent, csak kevésbé, mint a többié. Ha a nagy kosarak súlya csökken, az átlagos kosárérték akkor is esik, ha a kosarakon belül nem változik a költés (mix-hatás).' },
+    'dt-table': { t: 'Részletes tábla', p: ['Minden mutató kosárméretenként, az idei érték és az éves változás párban. A gombokkal oszlopcsoportokat kapcsolhatsz ki-be, a fejlécre kattintva rendezhetsz (még egy kattintás: fordított sorrend, harmadik: eredeti sorrend).'], l: [['Átlagkosár', 'forgalom ÷ tranzakciók.'], ['Tétel/trx', 'tételek ÷ tranzakciók.'], ['Átlagár', 'forgalom ÷ tételek.'], ['Tranz. rész., Forg. rész.', 'a kosárméret részesedése az összes tranzakcióból, illetve a forgalomból.']], n: 'A kosárméret-szűrő a sorokra hat, az Összesen sor mindig az összes kosárra vonatkozik.' },
+    // ---- részletező panel ----
+    'dr-main': { t: 'Részletező', p: ['A kiválasztott kosárméret (vagy az összes kosár) részletei. Bármely diagram oszlopára, téglalapjára, buborékjára, a táblák soraira vagy a fenti gombokra kattintva válthatsz.', 'A szöveges összefoglaló automatikusan készül az adatokból: megnevezi a forgalomváltozás legnagyobb hatását és az ellenkező irányba ható tényezőt.'] },
+    'dr-cmp': { t: 'Előző év vs. most', p: ['Mutatónként két sáv: a szürke az előző évi, a sötét az idei érték, mindkettő a nagyobbikhoz arányítva. Mellette az idei érték és az éves változás.', 'Kis változásnál a két sáv szinte egyforma hosszú: ilyenkor a százalék a mérvadó.'] },
+    'dr-eff': { t: 'Mi okozta a forgalomváltozást?', p: ['A kiválasztott kosárméret forgalomváltozása három hatásra bontva, millió forintban. A középvonaltól jobbra pozitív, balra negatív hatás; a sávok hossza egymáshoz arányos.'], l: EFF_LIST },
+    'dr-share': { t: 'Súly az egészben', p: ['A kosárméret részesedése az összes tranzakcióból és a teljes forgalomból, tavaly → idén, zárójelben a változás százalékpontban.', 'A részesedés akkor is nőhet, ha a kosárméret abszolút értékben csökkent, csak kevésbé, mint a többi.'] },
+    'dr-atv': { t: 'Átlagkosár-változás bontása', p: ['Az összes kosár átlagos kosárértékének változása két részre bontva:'], l: [['Mix', 'a kosárméretek arányának eltolódásából eredő rész (a tavalyi kosárértékekkel számolva).'], ['Kosarakon belül', 'az egyes kosárméreteken belüli költés változása (az idei arányokkal súlyozva).']], n: 'A kettő összege pontosan a teljes változás forintban.' },
+    // ---- adatminőség ----
+    'q-struct': { t: 'Adatstruktúra', p: ['A dashboard egyetlen hosszú formátumú (long format) nyers táblából számol: hónaponként és kosárméretenként egy sor, öt oszloppal. Minden további mutatót (arányok, változások, részesedések, hatásbontás) maga számol, így a kerekített összesítő táblák közti eltérések nem keletkezhetnek.', 'Friss adathoz csak ezt az öt oszlopot kell frissíteni. Ha az előző év azonos hónapja is benne van, az éves összehasonlítás automatikusan elkészül.'] },
+    'q-recon': { t: 'Egyeztetés az eredeti összesítő táblával', p: ['Az eredeti fájl második, kerekített táblájának minden értékét összeveti a nyers adatokból újraszámolt értékkel.'], l: [['✓', 'az eltérés belefér a forrás kerekítésébe: egész százaléknál ±0,5 százalékpont, millió forintnál ±0,5 M Ft (a forgalomváltozásnál ±1 M Ft), forint- és darabértékeknél ±0,5.'], ['✗', 'valódi eltérés, amit a forrásban érdemes ellenőrizni.']], n: 'Egy cella fölé víve látszik az eredeti, az újraszámolt érték és a különbség.' },
+    'q-finds': { t: 'Javaslatok a jobb döntéshozatalhoz', p: ['Azok a hiányosságok, amelyek miatt a jelenlegi adatból egyes vezetői kérdésekre nem adható válasz, és hogy mivel lehetne pótolni őket.'], l: [['Magas', 'nélküle a fő kérdésre (miért és hol változik a forgalom) nem adható megalapozott válasz.'], ['Közepes', 'pontosítaná vagy árnyalná a következtetéseket.'], ['Alacsony', 'adatkezelési javaslat, a hibalehetőségek csökkentésére.']] },
+  };
+  BK.HELP = HELP;
+
+  const root = BK.root;
+  const pop = document.getElementById('bk-help');
+  let cur = null;
+  function render(key) {
+    const e = HELP[key];
+    pop.replaceChildren();
+    if (!e) return false;
+    pop.appendChild(h('div', 'bk-help-h', e.t));
+    (e.p || []).forEach((t) => pop.appendChild(h('p', '', t)));
+    (e.l || []).forEach((x) => {
+      const li = h('p', 'bk-help-li');
+      li.appendChild(h('span', 'bk-help-term', x[0] + ': '));
+      li.appendChild(document.createTextNode(x[1]));
+      pop.appendChild(li);
+    });
+    if (e.n) pop.appendChild(h('p', 'bk-help-n', e.n));
+    return true;
+  }
+  function show(el) {
+    if (!render(el.dataset.help)) return;
+    cur = el;
+    pop.hidden = false;
+    BK.tip.hide();
+    const r = el.getBoundingClientRect(), R = root.getBoundingClientRect();
+    const w = pop.offsetWidth;
+    let left = r.left - R.left;
+    if (left + w > root.clientWidth) left = Math.max(0, root.clientWidth - w);
+    pop.style.left = left + 'px';
+    pop.style.top = (r.bottom - R.top + 8) + 'px';
+  }
+  function hide() { cur = null; pop.hidden = true; }
+  BK.hideHelp = hide;
+  root.addEventListener('mouseover', (e) => {
+    const t = e.target.closest('[data-help]');
+    if (t && t !== cur) show(t);
+  });
+  root.addEventListener('mouseout', (e) => {
+    const t = e.target.closest('[data-help]');
+    if (t && t === cur && !t.contains(e.relatedTarget)) hide();
+  });
+  root.addEventListener('focusin', (e) => {
+    const t = e.target.closest('[data-help]');
+    if (t) show(t);
+  });
+  root.addEventListener('focusout', (e) => {
+    const t = e.target.closest('[data-help]');
+    if (t && t === cur) hide();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('[data-help]')) hide(); });
 })();
 
 </script>
@@ -892,7 +1014,7 @@ dash.calc('recon', {
       bars.push({ label: d[0], sub: BK.pshort(t.period), key: d[1], cur: true });
       if (BK.mixPrev && hasPrev) bars.push({ label: d[0], sub: BK.pshort(t.prev_period), key: d[2], cur: false });
     });
-    const rowH = 38, m = { t: 6, r: 6, b: 6, l: 104 };
+    const rowH = 42, m = { t: 6, r: 6, b: 6, l: 104 };
     const H = m.t + m.b + bars.length * rowH + (BK.mixPrev && hasPrev ? 10 : 0);
     const o = BK.svgIn(el, H); if (!o) return;
     const svg = o.svg, w = o.w;
@@ -909,8 +1031,11 @@ dash.calc('recon', {
         const g = svg.append('g').style('cursor', 'pointer');
         g.append('rect').attr('x', x0 + 0.5).attr('width', Math.max(0, bw - 1)).attr('y', yy).attr('height', rowH - 8).attr('rx', 3)
           .attr('fill', BK.color(s.segment)).attr('fill-opacity', b.cur ? 1 : 0.5).attr('stroke', sel ? 'var(--color-fg)' : 'none').attr('stroke-width', 2);
-        if (bw >= 50) g.append('text').attr('x', x0 + bw / 2).attr('y', yy + (rowH - 8) / 2 + 4).attr('text-anchor', 'middle').style('fill', 'var(--color-bg)').attr('font-weight', 600).text(s.segment + ' ' + fmt.pct0(v));
-        else if (bw >= 24) g.append('text').attr('x', x0 + bw / 2).attr('y', yy + (rowH - 8) / 2 + 4).attr('text-anchor', 'middle').style('fill', 'var(--color-bg)').attr('font-weight', 600).text(s.segment);
+        const cy = yy + (rowH - 8) / 2, cx = x0 + bw / 2;
+        const lab = (dy, txt, wgt) => g.append('text').attr('x', cx).attr('y', cy + dy).attr('text-anchor', 'middle').style('fill', b.cur ? 'var(--color-bg)' : 'var(--color-fg)').attr('font-weight', wgt).text(txt);
+        if (bw >= 70) lab(4, s.segment + ' ' + fmt.pctu(v), 600);
+        else if (bw >= 38) { lab(-3, s.segment, 700); lab(11, fmt.pctu(v), 500); }
+        else if (bw >= 18) lab(4, s.segment, 700);
         g.on('mousemove', (evt) => {
           const lines = [{ t: BK.name(s.segment) + ' · ' + b.label + ' (' + b.sub + ')', h: true, c: BK.color(s.segment) }, { t: 'Részesedés', v: fmt.pctu(v) }];
           if (hasPrev) lines.push({ t: 'Előző évhez képest', v: fmt.pp(s[defs.find((d) => d[1] === b.key || d[2] === b.key)[1]] - s[defs.find((d) => d[1] === b.key || d[2] === b.key)[2]]), cls: '' });
@@ -1226,7 +1351,10 @@ dash.calc('recon', {
     nb.replaceChildren();
     BK.insights().forEach((n) => {
       const b = h('button', 'bk-insight'); b.type = 'button';
-      b.appendChild(h('span', 'bk-insight-k', n.k));
+      const kl = h('span', 'bk-insight-k');
+      const ks = h('span', 'bk-help-t', n.k); ks.dataset.help = n.help;
+      kl.appendChild(ks);
+      b.appendChild(kl);
       b.appendChild(h('span', 'bk-insight-t', n.t));
       b.addEventListener('click', () => BK.pick(n.pick));
       nb.appendChild(b);
