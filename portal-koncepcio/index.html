@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kosárpulzus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<style>
+/* Elrendezés: ikonsáv | munkaterület 12 oszlopos rácson | jobb oldali részletező panel ugyanazon a vásznon.
+   Egy „fókuszszint” kapcsoló (Vezetői / Elemzői / Adat) sűríti vagy bontja ki ugyanazt a nézetet. */
+:root {
+  --bg: #eef1f5; --bg-dot: #d6dde7; --panel: #ffffff; --panel-2: #f6f8fb; --line: #e0e5ec; --line-2: #cbd3de;
+  --fg: #0e1621; --fg-2: #4a5566; --fg-3: #737f92;
+  --accent: #2a78d6; --accent-ink: #1c5cab; --accent-soft: #e3eefb;
+  --pos: #2a78d6; --neg: #d03b3b; --mid: #eceef1; --ly: #98a3b3;
+  --good: #0ca30c; --good-ink: #006300; --crit: #d03b3b; --crit-ink: #b42323; --warn: #fab219;
+  --s1: #86b6ef; --s2: #5598e7; --s3: #2a78d6; --s4: #1c5cab; --s5: #104281;
+  --on-s1: #0e1621; --on-s2: #0e1621; --on-s3: #ffffff; --on-s4: #ffffff; --on-s5: #ffffff;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 10px 28px -14px rgba(16, 24, 40, .16);
+  --shadow-pop: 0 24px 60px -20px rgba(16, 24, 40, .35);
+  --scrim: rgba(14, 22, 33, .32);
+  --font-ui: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-num: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r: 14px; --r-sm: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0f16; --bg-dot: #172030; --panel: #111823; --panel-2: #162030; --line: #1f2a39; --line-2: #2d3b4f;
+    --fg: #e7ecf3; --fg-2: #a7b2c2; --fg-3: #7d8a9e;
+    --accent: #3987e5; --accent-ink: #86b6ef; --accent-soft: #14294a;
+    --pos: #3987e5; --neg: #e66767; --mid: #252d38; --ly: #5d6a7c;
+    --good-ink: #4cc35a; --crit-ink: #f07f7f;
+    --s1: #184f95; --s2: #256abf; --s3: #3987e5; --s4: #6da7ec; --s5: #9ec5f4;
+    --on-s1: #ffffff; --on-s2: #ffffff; --on-s3: #ffffff; --on-s4: #0a0f16; --on-s5: #0a0f16;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 28px -14px rgba(0, 0, 0, .6);
+    --shadow-pop: 0 24px 60px -20px rgba(0, 0, 0, .8);
+    --scrim: rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0f16; --bg-dot: #172030; --panel: #111823; --panel-2: #162030; --line: #1f2a39; --line-2: #2d3b4f;
+  --fg: #e7ecf3; --fg-2: #a7b2c2; --fg-3: #7d8a9e;
+  --accent: #3987e5; --accent-ink: #86b6ef; --accent-soft: #14294a;
+  --pos: #3987e5; --neg: #e66767; --mid: #252d38; --ly: #5d6a7c;
+  --good-ink: #4cc35a; --crit-ink: #f07f7f;
+  --s1: #184f95; --s2: #256abf; --s3: #3987e5; --s4: #6da7ec; --s5: #9ec5f4;
+  --on-s1: #ffffff; --on-s2: #ffffff; --on-s3: #ffffff; --on-s4: #0a0f16; --on-s5: #0a0f16;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 28px -14px rgba(0, 0, 0, .6);
+  --shadow-pop: 0 24px 60px -20px rgba(0, 0, 0, .8);
+  --scrim: rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  background-image: radial-gradient(var(--bg-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--fg); font-family: var(--font-ui); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+kbd {
+  font-family: var(--font-num); font-size: 11px; padding: 1px 5px; border-radius: 5px;
+  border: 1px solid var(--line-2); background: var(--panel-2); color: var(--fg-2);
+}
+
+/* ---------- Váz ---------- */
+.app { display: grid; grid-template-columns: 76px minmax(0, 1fr); min-height: 100vh; }
+.app.has-insp { grid-template-columns: 76px minmax(0, 1fr) 420px; }
+.rail {
+  position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 0; padding-left: env(safe-area-inset-left, 0px);
+  background: var(--panel); border-right: 1px solid var(--line);
+}
+.logo {
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 14px;
+  background: var(--fg); color: var(--panel);
+}
+.rail-btn {
+  width: 60px; padding: 8px 0 6px; border: 0; border-radius: 10px; background: transparent; color: var(--fg-3);
+  display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 500; position: relative;
+}
+.rail-btn svg { width: 20px; height: 20px; }
+.rail-btn:hover { background: var(--panel-2); color: var(--fg); }
+.rail-btn[aria-current="page"] { background: var(--accent-soft); color: var(--accent-ink); }
+.rail-btn .badge {
+  position: absolute; top: 4px; right: 10px; min-width: 16px; height: 16px; border-radius: 8px; padding: 0 4px;
+  background: var(--crit); color: #fff; font-size: 10px; font-weight: 600; display: grid; place-items: center;
+}
+.rail .spacer { flex: 1; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600;
+  background: var(--accent-soft); color: var(--accent-ink); border: 1px solid var(--line-2);
+}
+
+.main {
+  min-width: 0;
+  padding-block: 0 48px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Fejléc ---------- */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding-block: 12px; margin-inline: -8px; padding-inline: 8px;
+  background: color-mix(in oklab, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.crumbs { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; min-width: 0; }
+.crumbs .ws { font-weight: 600; font-size: 15px; margin-right: 6px; letter-spacing: -0.01em; }
+.crumb {
+  border: 0; background: transparent; padding: 4px 8px; border-radius: 7px; color: var(--fg-2); font-size: 13px;
+}
+.crumb:hover { background: var(--panel); color: var(--fg); }
+.crumb[aria-current="true"] { color: var(--fg); font-weight: 600; }
+.crumb-sep { color: var(--fg-3); font-size: 12px; }
+.top .grow { flex: 1; }
+.cmd-btn {
+  display: flex; align-items: center; gap: 10px; min-width: 260px; padding: 8px 10px 8px 12px; border-radius: 10px;
+  border: 1px solid var(--line-2); background: var(--panel); color: var(--fg-3); text-align: left; box-shadow: var(--shadow);
+}
+.cmd-btn span { flex: 1; }
+.cmd-btn:hover { border-color: var(--accent); color: var(--fg-2); }
+.fresh { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--fg-2); white-space: nowrap; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--good); position: relative; }
+.pulse::after {
+  content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--good); opacity: 0;
+  animation: ping 2.4s ease-out infinite;
+}
+@keyframes ping { 0% { transform: scale(.5); opacity: .7; } 100% { transform: scale(1.4); opacity: 0; } }
+
+.levels {
+  display: inline-flex; padding: 3px; border-radius: 11px; background: var(--panel); border: 1px solid var(--line-2); position: relative;
+}
+.levels button {
+  border: 0; background: transparent; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--fg-2);
+  display: flex; align-items: center; gap: 6px; position: relative; z-index: 1;
+}
+.levels button kbd { font-size: 10px; padding: 0 4px; }
+.levels button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+.levels button[aria-pressed="true"] kbd { background: transparent; color: inherit; border-color: color-mix(in oklab, var(--panel) 40%, transparent); }
+
+/* ---------- Szűrősor ---------- */
+.filters {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+  padding: 10px 14px; border-radius: var(--r); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.fgroup { display: flex; align-items: center; gap: 8px; }
+.flabel { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--fg-3); font-weight: 600; }
+.sel {
+  appearance: none; border: 1px solid var(--line-2); background: var(--panel-2); border-radius: 8px; padding: 5px 28px 5px 10px;
+  font-size: 13px; font-weight: 500;
+  background-image: linear-gradient(45deg, transparent 50%, var(--fg-3) 50%), linear-gradient(135deg, var(--fg-3) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 52%, calc(100% - 9px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
+}
+.chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.chip {
+  border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; padding: 4px 10px; font-size: 12.5px; font-weight: 500;
+  color: var(--fg-3); display: inline-flex; align-items: center; gap: 6px;
+}
+.chip[aria-pressed="true"] { color: var(--fg); background: var(--panel-2); border-color: var(--fg-3); }
+.chip .sw { width: 9px; height: 9px; border-radius: 3px; }
+.chip[aria-pressed="false"] .sw { opacity: .3; }
+.vs { font-size: 12.5px; color: var(--fg-2); }
+.reset {
+  margin-left: auto; border: 0; background: transparent; color: var(--accent-ink); font-size: 12.5px; font-weight: 600; padding: 4px 6px; border-radius: 6px;
+}
+.reset:hover { background: var(--accent-soft); }
+.sample {
+  display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--fg-2); margin: 10px 2px 16px;
+}
+.sample b { font-weight: 600; color: var(--fg); }
+.tag {
+  display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  background: var(--accent-soft); color: var(--accent-ink); letter-spacing: .02em;
+}
+
+/* ---------- KPI csempék ---------- */
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi {
+  text-align: left; border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 14px 14px 10px;
+  box-shadow: var(--shadow); display: grid; gap: 4px; position: relative; transition: border-color .15s, transform .15s;
+}
+.kpi:hover { border-color: var(--line-2); transform: translateY(-1px); }
+.kpi[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow); }
+.kpi-h { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12.5px; color: var(--fg-2); font-weight: 500; }
+.kpi-v { font-size: 26px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; white-space: nowrap; }
+.kpi-v small { font-size: 13px; font-weight: 500; color: var(--fg-3); margin-left: 2px; letter-spacing: 0; }
+.kpi-f { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--fg-3); }
+.kpi svg.spark { width: 100%; height: 34px; display: block; }
+.info {
+  width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--line-2); display: grid; place-items: center;
+  font-size: 10px; font-weight: 700; color: var(--fg-3); background: transparent; padding: 0;
+}
+.info:hover { color: var(--accent-ink); border-color: var(--accent); }
+.delta {
+  white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  font-family: var(--font-num); font-variant-numeric: tabular-nums;
+}
+.delta.up { background: color-mix(in oklab, var(--pos) 14%, transparent); color: var(--accent-ink); }
+.delta.down { background: color-mix(in oklab, var(--neg) 14%, transparent); color: var(--crit-ink); }
+.delta.flat { background: var(--panel-2); color: var(--fg-2); }
+.app[data-level="exec"] .kpi-v { font-size: 30px; }
+.app[data-level="data"] .kpi svg.spark { display: none; }
+
+/* ---------- Kártyarács ---------- */
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.card {
+  min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow);
+  padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 80px;
+}
+.c-story { grid-column: span 4; } .c-trend { grid-column: span 8; }
+.c-bridge { grid-column: span 6; } .c-mix { grid-column: span 6; }
+.c-heat, .c-table { grid-column: span 12; }
+.c-raw { grid-column: span 7; } .c-sem { grid-column: span 5; }
+.app[data-level="exec"] [data-min="analyst"], .app[data-level="exec"] [data-min="data"], .app[data-level="analyst"] [data-min="data"] { display: none; }
+.card-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.card-h h2 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.card-h p { margin: 2px 0 0; font-size: 12.5px; color: var(--fg-3); max-width: 60ch; }
+.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-3); font-weight: 600; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 4px 9px; font-size: 12px; color: var(--fg-2); }
+.seg button + button { border-left: 1px solid var(--line-2); }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--fg); font-weight: 600; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--fg-2); }
+.legend i { display: inline-block; width: 14px; height: 0; border-top: 2px solid var(--accent); vertical-align: middle; margin-right: 6px; }
+.legend i.ly { border-top: 2px dashed var(--ly); }
+.legend i.box { width: 10px; height: 10px; border: 0; border-radius: 3px; }
+.chart { width: 100%; min-width: 0; position: relative; }
+.chart svg { display: block; width: 100%; overflow: visible; }
+.axis text, .lbl { fill: var(--fg-3); font-size: 11px; font-family: var(--font-num); }
+.grid-l { stroke: var(--line); stroke-width: 1; }
+.note { font-size: 12px; color: var(--fg-3); margin: 0; }
+
+/* Történet / AI összefoglaló */
+.c-story { background: linear-gradient(160deg, var(--accent-soft), var(--panel) 46%); }
+.story-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.story-list li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 13.5px; line-height: 1.5; }
+.story-list .ic {
+  width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  background: var(--panel); border: 1px solid var(--line-2); color: var(--fg-2);
+}
+.story-list .ic.crit { color: var(--crit-ink); border-color: color-mix(in oklab, var(--crit) 40%, var(--line-2)); }
+.story-list b { font-weight: 600; }
+.link {
+  border: 0; background: transparent; padding: 0; color: var(--accent-ink); font-weight: 600; text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent); text-underline-offset: 3px;
+}
+.ask {
+  display: flex; gap: 8px; margin-top: auto; padding-top: 4px;
+}
+.ask button {
+  flex: 1; text-align: left; border: 1px dashed var(--line-2); background: var(--panel); color: var(--fg-2); font-size: 12.5px;
+  padding: 7px 10px; border-radius: 9px;
+}
+.ask button:hover { border-color: var(--accent); color: var(--fg); }
+
+/* Mix sávok */
+.mix { display: grid; gap: 10px; }
+.mix-row { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 10px; align-items: center; }
+.mix-row .rl { font-size: 12.5px; color: var(--fg-2); }
+.mix-row .rl b { display: block; color: var(--fg); font-weight: 600; font-size: 12.5px; }
+.stack { display: flex; gap: 2px; height: 28px; }
+.stack button {
+  border: 0; padding: 0; min-width: 0; border-radius: 4px; font-size: 11px; font-weight: 600; font-family: var(--font-num);
+  display: grid; place-items: center; overflow: hidden; white-space: nowrap; transition: filter .12s;
+}
+.stack button:hover { filter: brightness(1.08) saturate(1.1); }
+.mix-sep { height: 1px; background: var(--line); margin: 2px 0; }
+
+/* Hőtérkép */
+.heat-wrap { overflow-x: auto; }
+.heat { display: grid; grid-template-columns: 170px repeat(6, minmax(78px, 1fr)); gap: 3px; min-width: 640px; }
+.heat .hh { font-size: 11.5px; color: var(--fg-3); font-weight: 600; padding: 4px 6px; text-align: center; }
+.heat .hh.l { text-align: left; }
+.heat .rh { font-size: 13px; color: var(--fg-2); padding: 0 6px; display: flex; align-items: center; font-weight: 500; }
+.heat .tot { font-weight: 700; color: var(--fg); }
+.cell {
+  border: 0; border-radius: 6px; height: 40px; font-family: var(--font-num); font-size: 12.5px; font-weight: 600;
+  display: grid; place-items: center; transition: transform .12s, box-shadow .12s;
+}
+.cell:hover { transform: scale(1.04); box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--fg-3); position: relative; z-index: 1; }
+.scale { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--fg-3); font-family: var(--font-num); }
+.scale .bar { width: 160px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--neg), var(--mid), var(--pos)); }
+
+/* Táblák */
+.tbl-wrap { overflow-x: auto; margin: 0 -4px; }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 780px; }
+.tbl th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); font-weight: 600;
+  padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; position: sticky; top: 0; background: var(--panel);
+}
+.tbl th button { border: 0; background: transparent; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; }
+.tbl th button:hover { color: var(--fg); }
+.tbl th[aria-sort="ascending"] button::after { content: " ▲"; }
+.tbl th[aria-sort="descending"] button::after { content: " ▼"; }
+.tbl th.r, .tbl td.r { text-align: right; }
+.tbl td { padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: middle; }
+.tbl tbody tr { cursor: pointer; transition: background .1s; }
+.tbl tbody tr:hover, .tbl tbody tr.sel { background: var(--panel-2); }
+.tbl tbody tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.tbl .sub { color: var(--fg-3); font-size: 12px; }
+.dbar { width: 110px; height: 14px; position: relative; }
+.dbar::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--line-2); }
+.dbar span { position: absolute; top: 2px; height: 10px; border-radius: 3px; }
+.mini-mix { display: flex; gap: 1px; width: 120px; height: 10px; }
+.mini-mix span { border-radius: 2px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+}
+.pill.crit { color: var(--crit-ink); background: color-mix(in oklab, var(--crit) 12%, transparent); }
+.pill.good { color: var(--good-ink); background: color-mix(in oklab, var(--good) 14%, transparent); }
+.pill.ok { color: var(--fg-3); }
+.app[data-level="analyst"] .col-data { display: none; }
+table.raw { min-width: 640px; font-size: 12.5px; }
+table.raw tbody tr { cursor: default; }
+.raw-scroll { max-height: 420px; overflow: auto; }
+
+/* Szemantikus réteg */
+.defs { display: grid; gap: 10px; margin: 0; }
+.defs div { display: grid; gap: 2px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.defs dt { font-weight: 600; font-size: 13px; }
+.defs dd { margin: 0; font-size: 12.5px; color: var(--fg-2); }
+.defs code { font-family: var(--font-num); font-size: 11.5px; color: var(--accent-ink); }
+pre.sql {
+  margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line);
+  font-family: var(--font-num); font-size: 12px; line-height: 1.55; overflow-x: auto; color: var(--fg-2);
+}
+pre.sql .k { color: var(--accent-ink); font-weight: 600; }
+.btn {
+  border: 1px solid var(--line-2); background: var(--panel); border-radius: 9px; padding: 6px 12px; font-size: 12.5px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px; color: var(--fg);
+}
+.btn:hover { border-color: var(--fg-3); }
+.btn.primary { background: var(--fg); color: var(--panel); border-color: var(--fg); }
+
+/* ---------- Részletező panel ---------- */
+.insp {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--line);
+  padding: 18px 20px 32px; padding-right: max(20px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 16px; animation: slide .22s cubic-bezier(.2, .7, .2, 1);
+}
+@keyframes slide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.insp-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.insp-h h3 { margin: 4px 0 0; font-size: 20px; letter-spacing: -0.02em; font-weight: 600; text-wrap: balance; }
+.x { border: 1px solid var(--line-2); background: var(--panel); width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--fg-2); flex: none; }
+.x:hover { color: var(--fg); border-color: var(--fg-3); }
+.insp section { display: grid; gap: 8px; }
+.insp h4 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-3); font-weight: 600; }
+.mrows { display: grid; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.mrow {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 8px 12px; font-size: 13px;
+  border: 0; background: transparent; text-align: left; border-bottom: 1px solid var(--line);
+}
+.mrow:last-child { border-bottom: 0; }
+.mrow:hover { background: var(--panel-2); }
+.mrow[aria-pressed="true"] { background: var(--accent-soft); }
+.mrow .num { font-weight: 600; }
+.insp textarea {
+  width: 100%; min-height: 70px; resize: vertical; border: 1px solid var(--line-2); border-radius: 10px; background: var(--panel-2);
+  padding: 8px 10px; font-size: 13px;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.eff { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13px; }
+.eff .num { text-align: right; font-weight: 600; }
+.pos-t { color: var(--accent-ink); } .neg-t { color: var(--crit-ink); }
+.scrim { display: none; }
+
+/* ---------- Parancspaletta ---------- */
+.pal-back { position: fixed; inset: 0; background: var(--scrim); z-index: 60; display: grid; place-items: start center; padding: 12vh 16px 16px; }
+.pal {
+  width: min(640px, 100%); background: var(--panel); border: 1px solid var(--line-2); border-radius: 16px; box-shadow: var(--shadow-pop);
+  overflow: hidden; animation: pop .16s ease-out;
+}
+@keyframes pop { from { transform: translateY(-6px) scale(.985); opacity: 0; } to { transform: none; opacity: 1; } }
+.pal-in { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.pal-in input { flex: 1; border: 0; outline: 0; background: transparent; font-size: 16px; min-width: 0; }
+.pal-list { max-height: 50vh; overflow-y: auto; padding: 6px; }
+.pal-grp { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-3); font-weight: 600; padding: 10px 10px 4px; }
+.pal-it {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; background: transparent; border-radius: 9px; text-align: left; font-size: 13.5px;
+}
+.pal-it .k { margin-left: auto; color: var(--fg-3); font-size: 12px; }
+.pal-it[aria-selected="true"] { background: var(--accent-soft); color: var(--accent-ink); }
+.pal-it .ico { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; background: var(--panel-2); border: 1px solid var(--line); font-size: 12px; flex: none; color: var(--fg-2); }
+.pal-foot { display: flex; gap: 14px; padding: 9px 16px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--fg-3); flex-wrap: wrap; }
+
+/* ---------- Tooltip, toast ---------- */
+.tip {
+  position: fixed; z-index: 80; pointer-events: none; background: var(--panel); border: 1px solid var(--line-2); border-radius: 10px;
+  box-shadow: var(--shadow-pop); padding: 8px 10px; font-size: 12.5px; min-width: 150px; max-width: 260px;
+}
+.tip .t { font-weight: 600; margin-bottom: 4px; }
+.tip .r { display: flex; justify-content: space-between; gap: 14px; color: var(--fg-2); }
+.tip .r b { color: var(--fg); font-family: var(--font-num); font-weight: 600; }
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 90;
+  background: var(--fg); color: var(--panel); padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; box-shadow: var(--shadow-pop);
+}
+
+/* ---------- Reszponzív ---------- */
+@media (max-width: 1360px) {
+  .app.has-insp { grid-template-columns: 76px minmax(0, 1fr); }
+  .insp {
+    position: fixed; right: 0; top: 0; bottom: 0; width: min(440px, 100%); z-index: 50; box-shadow: var(--shadow-pop);
+    padding-top: max(18px, env(safe-area-inset-top, 0px)); padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
+  }
+  .app.has-insp .scrim { display: block; position: fixed; inset: 0; background: var(--scrim); z-index: 45; }
+}
+@media (max-width: 1180px) {
+  .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .c-story, .c-trend, .c-bridge, .c-mix, .c-raw, .c-sem { grid-column: span 12; }
+}
+@media (max-width: 760px) {
+  .app, .app.has-insp { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi-v { font-size: 22px; }
+  .kpi:first-child { grid-column: span 2; }
+  .app[data-level="exec"] .kpi-v { font-size: 24px; }
+  .cmd-btn { min-width: 0; flex: 1 1 100%; order: 5; }
+  .cmd-btn kbd { display: none; }
+  .levels button kbd { display: none; }
+  .fresh { display: none; }
+  .mix-row { grid-template-columns: 84px minmax(0, 1fr); }
+  .reset { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app" data-level="analyst">
+  <nav class="rail" aria-label="Munkaterületek">
+    <div class="logo" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 9h16l-1.6 9.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8L4 9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 9l2.2-5M16 9l-2.2-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 14.5h2l1.2-2 1.6 4 1.2-2H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <button class="rail-btn" aria-current="page" data-go="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Áttekintés</button>
+    <button class="rail-btn" data-go="c-mix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h10M4 17h6"/></svg>Kosárméret</button>
+    <button class="rail-btn" data-go="c-heat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Régiók</button>
+    <button class="rail-btn" data-go="c-table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6v10H3z"/><path d="M9 20v-6h6v6"/></svg>Áruházak</button>
+    <button class="rail-btn" id="rail-alerts" data-go="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/></svg>Riasztás<span class="badge" id="alert-badge">0</span></button>
+    <button class="rail-btn" data-go="c-sem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>Adatok</button>
+    <div class="spacer"></div>
+    <div class="avatar" title="Bejelentkezett elemző">KE</div>
+  </nav>
+
+  <main class="main" id="top">
+    <header class="top">
+      <div class="crumbs" id="crumbs" aria-label="Lefúrási útvonal"></div>
+      <div class="grow"></div>
+      <button class="cmd-btn" id="cmd-open" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span>Keress vagy kérdezz az adatokról…</span><kbd>Ctrl K</kbd>
+      </button>
+      <div class="levels" role="group" aria-label="Fókuszszint">
+        <button type="button" data-level="exec" aria-pressed="false">Vezetői <kbd>1</kbd></button>
+        <button type="button" data-level="analyst" aria-pressed="true">Elemzői <kbd>2</kbd></button>
+        <button type="button" data-level="data" aria-pressed="false">Adat <kbd>3</kbd></button>
+      </div>
+      <div class="fresh"><span class="pulse" aria-hidden="true"></span>Frissítve 2026.11.01. 06:12</div>
+    </header>
+
+    <div class="filters" role="region" aria-label="Szűrők">
+      <div class="fgroup"><span class="flabel">Időszak</span><select class="sel" id="f-period" aria-label="Időszak"></select><span class="vs">vs. előző év azonos hónapja</span></div>
+      <div class="fgroup"><span class="flabel">Formátum</span><div class="chips" id="f-format"></div></div>
+      <div class="fgroup"><span class="flabel">Régió</span><select class="sel" id="f-region" aria-label="Régió"></select></div>
+      <div class="fgroup"><span class="flabel">Kosárméret</span><div class="chips" id="f-size"></div></div>
+      <button class="reset" id="f-reset" type="button" hidden>Szűrők törlése</button>
+    </div>
+    <div class="sample"><span class="tag">KONCEPCIÓ</span><span><b>Mintaadat</b>, nem valós számok: 20 áruház, 36 hónap, 5 kosárméret, generált értékekkel.</span></div>
+
+    <section class="kpis" id="kpis" aria-label="Fő mutatók"></section>
+
+    <div class="grid">
+      <article class="card c-story" id="c-story">
+        <div class="card-h"><div><div class="eyebrow">Automatikus összefoglaló</div><h2 id="story-title">Mi történt?</h2></div></div>
+        <ul class="story-list" id="story"></ul>
+        <div class="ask"><button type="button" id="ask-btn">Kérdezz rá: „Miért változott az átlagkosár?”</button></div>
+      </article>
+
+      <article class="card c-trend" id="c-trend">
+        <div class="card-h">
+          <div><h2 id="trend-title">Átlagkosár, utolsó 12 hónap</h2><p>Kattints egy hónapra, és az egész portál arra az időszakra vált.</p></div>
+          <div class="legend"><span><i></i>Idei</span><span><i class="ly"></i>Előző év</span></div>
+        </div>
+        <div class="chart" id="trend"></div>
+      </article>
+
+      <article class="card c-bridge" id="c-bridge">
+        <div class="card-h">
+          <div><h2>Mi mozgatta a forgalmat?</h2><p>Forgalomváltozás három hatásra bontva, M Ft. A tengely nem nulláról indul.</p></div>
+          <button class="btn" type="button" id="bridge-more">Bontás kosárméretenként</button>
+        </div>
+        <div class="chart" id="bridge"></div>
+      </article>
+
+      <article class="card c-mix" id="c-mix">
+        <div class="card-h">
+          <div><h2>Kosárméret-mix</h2><p>Részesedés a vásárlásokból és a forgalomból. Kattints egy szeletre a részletekért.</p></div>
+        </div>
+        <div class="mix" id="mix"></div>
+        <div class="legend" id="mix-legend"></div>
+      </article>
+
+      <article class="card c-heat" id="c-heat" data-min="analyst">
+        <div class="card-h">
+          <div><h2 id="heat-title">Régió × kosárméret</h2><p>Változás az előző évhez képest. Kattints egy cellára a lefúráshoz.</p></div>
+          <div class="scale"><span>−8%</span><span class="bar"></span><span>+8%</span></div>
+        </div>
+        <div class="heat-wrap"><div class="heat" id="heat"></div></div>
+      </article>
+
+      <article class="card c-table" id="c-table" data-min="analyst">
+        <div class="card-h">
+          <div><h2>Áruházak</h2><p>Fejlécre kattintva rendezhetsz. A sorra kattintva a részletek jobb oldalt nyílnak meg, a nézet megmarad.</p></div>
+          <div class="legend" id="tbl-legend"></div>
+        </div>
+        <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+      </article>
+
+      <article class="card c-raw" id="c-raw" data-min="data">
+        <div class="card-h">
+          <div><h2>Nyers sorok</h2><p id="raw-sub">A nézet mögötti ténytábla sorai, forgalom szerint rendezve.</p></div>
+        </div>
+        <div class="tbl-wrap raw-scroll"><table class="tbl raw" id="raw"></table></div>
+      </article>
+
+      <article class="card c-sem" id="c-sem" data-min="data">
+        <div class="card-h">
+          <div><h2>Mutatók és lekérdezés</h2><p>Minden szám ugyanabból a definícióból számol, a portál minden pontján.</p></div>
+          <button class="btn" type="button" id="sql-copy">SQL másolása</button>
+        </div>
+        <pre class="sql" id="sql"></pre>
+        <dl class="defs" id="defs"></dl>
+      </article>
+    </div>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="insp" id="insp" hidden aria-label="Részletek"></aside>
+</div>
+
+<div class="pal-back" id="pal" hidden>
+  <div class="pal" role="dialog" aria-modal="true" aria-label="Parancsok és keresés">
+    <div class="pal-in">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="pal-q" type="text" placeholder="Áruház, mutató, régió vagy kérdés…" autocomplete="off" aria-label="Keresés">
+      <kbd>Esc</kbd>
+    </div>
+    <div class="pal-list" id="pal-list" role="listbox"></div>
+    <div class="pal-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> lépkedés</span><span><kbd>Enter</kbd> megnyitás</span><span>Kérdést is írhatsz, például: „Miért esett Szeged?”</span></div>
+  </div>
+</div>
+<div class="tip" id="tip" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+  'use strict';
+  // ---------- Mintaadat ----------
+  const NM = 36, NB = 5;
+  const SIZES = ['XS', 'S', 'M', 'L', 'XL'];
+  const SIZE_DESC = ['1–2 tétel', '3–5 tétel', '6–10 tétel', '11–20 tétel', '21+ tétel'];
+  const FORMATS = ['Hipermarket', 'Szupermarket', 'Proxi'];
+  const REGIONS = ['Budapest és Pest', 'Észak', 'Kelet', 'Dél', 'Nyugat'];
+  const STORES = [
+    ['Budaörs', 0, 0], ['Csömör', 0, 0], ['Fót', 0, 0], ['Soroksár', 0, 0], ['Debrecen', 0, 2], ['Szeged', 0, 3], ['Pécs', 0, 3], ['Győr', 0, 4], ['Miskolc', 0, 1],
+    ['Óbuda', 1, 0], ['Újpest', 1, 0], ['Eger', 1, 1], ['Nyíregyháza', 1, 2], ['Szombathely', 1, 4],
+    ['Kőbánya', 2, 0], ['Zugló', 2, 0], ['Gödöllő', 2, 0], ['Kecskemét', 2, 3], ['Sopron', 2, 4], ['Hatvan', 2, 1]
+  ].map((s, i) => ({ i, name: s[0], f: s[1], r: s[2], id: 'A' + String(101 + i) }));
+  const NS = STORES.length;
+
+  let seed = 20261101;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const randn = () => { const u = 1 - rnd(), v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+
+  const SEASON = [0.92, 0.9, 0.97, 1.0, 1.02, 0.98, 1.0, 1.01, 0.97, 1.0, 1.03, 1.25];
+  const BASE_TRX = [112000, 42000, 17500];
+  const MIX = [[0.18, 0.24, 0.24, 0.2, 0.14], [0.28, 0.3, 0.22, 0.13, 0.07], [0.45, 0.33, 0.15, 0.06, 0.01]];
+  const IPT = [1.6, 3.9, 7.8, 14.6, 28.5];
+  const GROWTH = [0.035, 0.015, -0.006, -0.032, -0.072];
+  const FMT_GROWTH = [-0.01, 0.0, 0.055];
+  const PRICE = [1020, 1080, 1150];
+  const PSIZE = [1.25, 1.08, 1.0, 0.96, 0.93];
+  const D = new Float64Array(NS * NM * NB * 3);
+  STORES.forEach((st) => {
+    const scale = 0.78 + rnd() * 0.44;
+    const own = randn() * 0.02;
+    st.gTrend = own;
+    for (let i = 0; i < NM; i++) {
+      const mo = (10 + i) % 12;
+      const yrs = i / 12;
+      for (let b = 0; b < NB; b++) {
+        let trx = BASE_TRX[st.f] * scale * MIX[st.f][b] * SEASON[mo] * Math.pow(1 + GROWTH[b] + FMT_GROWTH[st.f] + own, yrs) * (1 + randn() * 0.02);
+        if (st.name === 'Szeged' && i >= 33) trx *= i === 33 ? 0.93 : 0.89;
+        if (st.name === 'Győr' && b >= 3 && i >= 32) trx *= 1.09;
+        if (st.name === 'Kecskemét' && i >= 30) trx *= 1.06;
+        const ipt = IPT[b] * Math.pow(0.994, yrs) * (1 + randn() * 0.01) * (mo === 11 ? 1.05 : 1);
+        const price = PRICE[st.f] * PSIZE[b] * Math.pow(1.047, yrs) * (mo === 11 ? 1.05 : 1) * (1 + randn() * 0.008);
+        const k = ((st.i * NM + i) * NB + b) * 3;
+        D[k] = Math.round(trx); D[k + 1] = Math.round(trx * ipt); D[k + 2] = Math.round(trx * ipt * price);
+      }
+    }
+  });
+
+  // ---------- Formázás ----------
+  const MN = ['január', 'február', 'március', 'április', 'május', 'június', 'július', 'augusztus', 'szeptember', 'október', 'november', 'december'];
+  const MS = ['jan', 'febr', 'márc', 'ápr', 'máj', 'jún', 'júl', 'aug', 'szept', 'okt', 'nov', 'dec'];
+  const mDate = (i) => new Date(2023, 10 + i, 1);
+  const mLabel = (i) => { const d = mDate(i); return d.getFullYear() + '. ' + MN[d.getMonth()]; };
+  const mShort = (i) => { const d = mDate(i); return MS[d.getMonth()] + (d.getMonth() === 0 ? ' ’' + String(d.getFullYear()).slice(2) : ''); };
+  const mKey = (i) => { const d = mDate(i); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+  const NF = {}; const nf = (d) => NF[d] || (NF[d] = new Intl.NumberFormat('hu-HU', { minimumFractionDigits: d, maximumFractionDigits: d }));
+  const sgn = (x) => (x >= 0 ? '+' : '−');
+  const pct = (x, d = 1) => (x === null || !isFinite(x)) ? '–' : sgn(x) + nf(d).format(Math.abs(x * 100)) + '%';
+  const smft = (x) => sgn(x) + nf(1).format(Math.abs(x / 1e6));
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const METRICS = {
+    atv: { name: 'Átlagkosár', v: (a) => a.rev / a.trx, f: (v) => nf(0).format(v), u: 'Ft', tick: (v) => nf(0).format(v), def: 'Egy vásárlás átlagos értéke.', formula: 'SUM(revenue_huf) / SUM(transactions)' },
+    rev: { name: 'Forgalom', v: (a) => a.rev, f: (v) => nf(1).format(v / 1e6), u: 'M Ft', tick: (v) => nf(0).format(v / 1e6), def: 'Bruttó eladási forgalom az időszakban.', formula: 'SUM(revenue_huf)' },
+    trx: { name: 'Vásárlásszám', v: (a) => a.trx, f: (v) => nf(1).format(v / 1000), u: 'ezer', tick: (v) => nf(0).format(v / 1000), def: 'Lezárt blokkok (tranzakciók) száma.', formula: 'SUM(transactions)' },
+    ipt: { name: 'Tétel / kosár', v: (a) => a.items / a.trx, f: (v) => nf(2).format(v), u: 'db', tick: (v) => nf(1).format(v), def: 'Egy vásárlásban átlagosan eladott tételek száma.', formula: 'SUM(items) / SUM(transactions)' },
+    price: { name: 'Átlagár / tétel', v: (a) => a.rev / a.items, f: (v) => nf(0).format(v), u: 'Ft', tick: (v) => nf(0).format(v), def: 'Egy eladott tétel átlagos ára.', formula: 'SUM(revenue_huf) / SUM(items)' }
+  };
+  const MKEYS = ['atv', 'rev', 'trx', 'ipt', 'price'];
+  const fullV = (k, v) => METRICS[k].f(v) + ' ' + METRICS[k].u;
+
+  // ---------- Állapot ----------
+  const store = { get(k, d) { try { const v = localStorage.getItem('kp.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('kp.' + k, JSON.stringify(v)); } catch (e) { /* nem kötelező */ } } };
+  const st = {
+    p: NM - 1, metric: store.get('metric', 'atv'), level: store.get('level', 'analyst'),
+    formats: [true, true, true], region: -1, sizes: [true, true, true, true, true], store: -1,
+    sort: { k: 'yoy', dir: 1 }, insp: null, trendMode: 'abs'
+  };
+  if (!METRICS[st.metric]) st.metric = 'atv';
+  if (!['exec', 'analyst', 'data'].includes(st.level)) st.level = 'analyst';
+
+  const selStores = (o = {}) => STORES.filter((s) => {
+    const fm = o.formats || st.formats, rg = o.region !== undefined ? o.region : st.region, one = o.store !== undefined ? o.store : st.store;
+    if (one >= 0) return s.i === one;
+    return fm[s.f] && (rg < 0 || s.r === rg);
+  }).map((s) => s.i);
+  const selSizes = () => st.sizes.map((on, b) => (on ? b : -1)).filter((b) => b >= 0);
+  const agg = (stores, sizes, i) => {
+    let t = 0, it = 0, r = 0;
+    for (const s of stores) for (const b of sizes) { const k = ((s * NM + i) * NB + b) * 3; t += D[k]; it += D[k + 1]; r += D[k + 2]; }
+    return { trx: t, items: it, rev: r };
+  };
+  const yoy = (a1, a0, k) => METRICS[k].v(a1) / METRICS[k].v(a0) - 1;
+  const bridge = (a0, a1) => {
+    const R0 = a0.rev, R1 = a1.rev;
+    const L = Math.abs(R1 - R0) < 1e-6 ? R0 : (R1 - R0) / (Math.log(R1) - Math.log(R0));
+    return {
+      R0, R1,
+      trx: L * Math.log(a1.trx / a0.trx),
+      ipt: L * Math.log((a1.items / a1.trx) / (a0.items / a0.trx)),
+      price: L * Math.log((a1.rev / a1.items) / (a0.rev / a0.items))
+    };
+  };
+
+  // ---------- Segédek ----------
+  const $ = (id) => document.getElementById(id);
+  const NS_SVG = 'http://www.w3.org/2000/svg';
+  const S = (tag, attrs, parent) => { const e = document.createElementNS(NS_SVG, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const niceStep = (span, n) => { const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; };
+  const deltaPill = (x) => `<span class="delta ${Math.abs(x) < 0.0005 ? 'flat' : x > 0 ? 'up' : 'down'}">${x > 0.0005 ? '▲' : x < -0.0005 ? '▼' : '•'} ${pct(x)}</span>`;
+  const sizeColor = (b) => `var(--s${b + 1})`;
+  const divColor = (x, cap = 0.08) => { const t = Math.max(-1, Math.min(1, x / cap)); const pctv = Math.round(Math.abs(t) * 100); return { bg: `color-mix(in oklab, ${t >= 0 ? 'var(--pos)' : 'var(--neg)'} ${pctv}%, var(--mid))`, fg: Math.abs(t) > 0.62 ? '#ffffff' : 'var(--fg)' }; };
+
+  const tip = $('tip');
+  const showTip = (ev, html) => {
+    tip.innerHTML = html; tip.hidden = false;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = ev.clientX + 14, y = ev.clientY + 14;
+    if (x + w > innerWidth - 8) x = ev.clientX - w - 14;
+    if (y + h > innerHeight - 8) y = ev.clientY - h - 14;
+    tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+  };
+  const hideTip = () => { tip.hidden = true; };
+  const tipRows = (title, rows) => `<div class="t">${esc(title)}</div>` + rows.map((r) => `<div class="r"><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('');
+  let toastT;
+  const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2600); };
+
+  // ---------- Szűrők ----------
+  function buildFilters() {
+    const ps = $('f-period');
+    for (let i = NM - 1; i >= NM - 12; i--) { const o = document.createElement('option'); o.value = i; o.textContent = mLabel(i); ps.appendChild(o); }
+    ps.addEventListener('change', () => { st.p = +ps.value; render(); });
+    const rs = $('f-region');
+    [['Összes régió', -1]].concat(REGIONS.map((r, i) => [r, i])).forEach(([n, v]) => { const o = document.createElement('option'); o.value = v; o.textContent = n; rs.appendChild(o); });
+    rs.addEventListener('change', () => { st.region = +rs.value; st.store = -1; render(); });
+    FORMATS.forEach((f, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = f; b.dataset.i = i;
+      b.addEventListener('click', () => { const on = st.formats.filter(Boolean).length; if (st.formats[i] && on === 1) return; st.formats[i] = !st.formats[i]; st.store = -1; render(); });
+      $('f-format').appendChild(b);
+    });
+    SIZES.forEach((s, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.dataset.i = i; b.title = SIZE_DESC[i];
+      b.innerHTML = `<span class="sw" style="background:${sizeColor(i)}"></span>${s}`;
+      b.addEventListener('click', () => { const on = st.sizes.filter(Boolean).length; if (st.sizes[i] && on === 1) return; st.sizes[i] = !st.sizes[i]; render(); });
+      $('f-size').appendChild(b);
+    });
+    $('f-reset').addEventListener('click', resetFilters);
+  }
+  function resetFilters() { st.formats = [true, true, true]; st.region = -1; st.sizes = [true, true, true, true, true]; st.store = -1; render(); }
+  function syncFilters() {
+    $('f-period').value = st.p; $('f-region').value = st.region;
+    document.querySelectorAll('#f-format .chip').forEach((b) => b.setAttribute('aria-pressed', st.formats[+b.dataset.i]));
+    document.querySelectorAll('#f-size .chip').forEach((b) => b.setAttribute('aria-pressed', st.sizes[+b.dataset.i]));
+    const dirty = st.region >= 0 || st.store >= 0 || st.formats.some((x) => !x) || st.sizes.some((x) => !x);
+    $('f-reset').hidden = !dirty;
+  }
+
+  // ---------- Morzsamenü ----------
+  function renderCrumbs() {
+    const c = $('crumbs'); c.innerHTML = '<span class="ws">Átlagkosár</span>';
+    const parts = [{ t: 'Összes áruház', act: () => resetFilters() }];
+    const onlyF = st.formats.filter(Boolean).length === 1 ? st.formats.indexOf(true) : -1;
+    if (onlyF >= 0) parts.push({ t: FORMATS[onlyF], act: () => { st.region = -1; st.store = -1; render(); } });
+    if (st.region >= 0) parts.push({ t: REGIONS[st.region], act: () => { st.store = -1; render(); } });
+    if (st.store >= 0) parts.push({ t: STORES[st.store].name, act: () => {} });
+    parts.forEach((p, i) => {
+      if (i) { const s = document.createElement('span'); s.className = 'crumb-sep'; s.textContent = '›'; c.appendChild(s); }
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'crumb'; b.textContent = p.t;
+      if (i === parts.length - 1) b.setAttribute('aria-current', 'true');
+      b.addEventListener('click', p.act); c.appendChild(b);
+    });
+  }
+
+  // ---------- KPI ----------
+  function sparkline(svg, vals, w, h, color) {
+    const lo = Math.min(...vals), hi = Math.max(...vals), span = hi - lo || 1;
+    const x = (i) => 2 + (i * (w - 8)) / (vals.length - 1), y = (v) => 3 + (h - 6) * (1 - (v - lo) / span);
+    const d = vals.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1)).join('');
+    const gid = 'g' + Math.random().toString(36).slice(2, 8);
+    const defs = S('defs', {}, svg); const lg = S('linearGradient', { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+    S('stop', { offset: 0, 'stop-color': color, 'stop-opacity': 0.22 }, lg); S('stop', { offset: 1, 'stop-color': color, 'stop-opacity': 0 }, lg);
+    S('path', { d: d + `L${x(vals.length - 1)} ${h}L${x(0)} ${h}Z`, fill: `url(#${gid})` }, svg);
+    S('path', { d, fill: 'none', stroke: color, 'stroke-width': 1.6, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+    S('circle', { cx: x(vals.length - 1), cy: y(vals[vals.length - 1]), r: 3, fill: color, stroke: 'var(--panel)', 'stroke-width': 1.5 }, svg);
+  }
+  function renderKpis() {
+    const ss = selStores(), sz = selSizes(), a1 = agg(ss, sz, st.p), a0 = agg(ss, sz, st.p - 12);
+    const el = $('kpis'); el.innerHTML = '';
+    MKEYS.forEach((k) => {
+      const m = METRICS[k], v = m.v(a1), d = yoy(a1, a0, k);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'kpi'; b.setAttribute('aria-pressed', st.metric === k);
+      b.innerHTML = `<div class="kpi-h"><span>${m.name}</span><span class="info" role="button" tabindex="0" aria-label="${m.name} definíciója" data-def="${k}">i</span></div>
+        <div class="kpi-v num">${m.f(v)}<small>${m.u}</small></div>
+        <svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="kpi-f">${deltaPill(d)}<span class="num">${m.f(m.v(a0))} tavaly</span></div>`;
+      const vals = []; for (let i = st.p - 11; i <= st.p; i++) vals.push(m.v(agg(ss, sz, i)));
+      sparkline(b.querySelector('svg'), vals, 200, 34, st.metric === k ? 'var(--accent)' : 'var(--fg-3)');
+      b.addEventListener('click', (e) => { if (e.target.closest('[data-def]')) { openInsp({ type: 'metric', k }); return; } setMetric(k); });
+      b.querySelector('[data-def]').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); openInsp({ type: 'metric', k }); } });
+      el.appendChild(b);
+    });
+  }
+  function setMetric(k) { st.metric = k; store.set('metric', k); render(); }
+
+  // ---------- Trend ----------
+  function drawTrend(host, stores, sizes, k, H, interactive) {
+    host.innerHTML = '';
+    const W = Math.max(280, host.clientWidth || 600), m = { l: 52, r: 16, t: 20, b: 26 };
+    const idx = []; for (let i = st.p - 11; i <= st.p; i++) idx.push(i);
+    const M = METRICS[k];
+    const ty = idx.map((i) => M.v(agg(stores, sizes, i))), ly = idx.map((i) => M.v(agg(stores, sizes, i - 12)));
+    const all = ty.concat(ly); let lo = Math.min(...all), hi = Math.max(...all); const pad = (hi - lo) * 0.12 || hi * 0.05; lo -= pad; hi += pad;
+    const step = niceStep(hi - lo, 4); lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+    const x = (j) => m.l + (j * (W - m.l - m.r)) / (idx.length - 1), y = (v) => m.t + (H - m.t - m.b) * (1 - (v - lo) / (hi - lo));
+    const svg = S('svg', { viewBox: `0 0 ${W} ${H}`, height: H, role: 'img', 'aria-label': M.name + ' trend' }, host);
+    const ax = S('g', { class: 'axis' }, svg);
+    for (let v = lo; v <= hi + step / 2; v += step) {
+      S('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: 'grid-l' }, ax);
+      const t = S('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, ax); t.textContent = M.tick(v);
+    }
+    const every = W < 520 ? 2 : 1;
+    idx.forEach((i, j) => { if ((idx.length - 1 - j) % every) return; const t = S('text', { x: x(j), y: H - 6, 'text-anchor': 'middle' }, ax); t.textContent = mShort(i); });
+    const path = (vals) => vals.map((v, j) => (j ? 'L' : 'M') + x(j).toFixed(1) + ' ' + y(v).toFixed(1)).join('');
+    const gid = 'tg' + Math.random().toString(36).slice(2, 8);
+    const lg = S('linearGradient', { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 }, S('defs', {}, svg));
+    S('stop', { offset: 0, 'stop-color': 'var(--accent)', 'stop-opacity': 0.2 }, lg); S('stop', { offset: 1, 'stop-color': 'var(--accent)', 'stop-opacity': 0 }, lg);
+    S('path', { d: path(ty) + `L${x(idx.length - 1)} ${y(lo)}L${x(0)} ${y(lo)}Z`, fill: `url(#${gid})` }, svg);
+    S('path', { d: path(ly), fill: 'none', stroke: 'var(--ly)', 'stroke-width': 1.6, 'stroke-dasharray': '4 4' }, svg);
+    S('path', { d: path(ty), fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg);
+    const last = idx.length - 1;
+    S('circle', { cx: x(last), cy: y(ty[last]), r: 4.5, fill: 'var(--accent)', stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    const lbl = S('text', { x: x(last) - 8, y: y(ty[last]) - 10, 'text-anchor': 'end', class: 'lbl', style: 'fill:var(--fg);font-weight:600' }, svg); lbl.textContent = M.f(ty[last]) + ' ' + M.u;
+    const cross = S('g', { style: 'display:none' }, svg);
+    const cl = S('line', { y1: m.t, y2: H - m.b, stroke: 'var(--fg-3)', 'stroke-width': 1, 'stroke-dasharray': '2 3' }, cross);
+    const c1 = S('circle', { r: 4, fill: 'var(--accent)', stroke: 'var(--panel)', 'stroke-width': 2 }, cross);
+    const c0 = S('circle', { r: 3.5, fill: 'var(--ly)', stroke: 'var(--panel)', 'stroke-width': 2 }, cross);
+    const hit = S('rect', { x: m.l - 10, y: 0, width: W - m.l - m.r + 20, height: H, fill: 'transparent', style: interactive ? 'cursor:pointer' : '' }, svg);
+    const near = (ev) => { const r = svg.getBoundingClientRect(); const px = ((ev.clientX - r.left) / r.width) * W; return Math.max(0, Math.min(last, Math.round(((px - m.l) / (W - m.l - m.r)) * last))); };
+    hit.addEventListener('pointermove', (ev) => {
+      const j = near(ev); cross.style.display = '';
+      cl.setAttribute('x1', x(j)); cl.setAttribute('x2', x(j)); c1.setAttribute('cx', x(j)); c1.setAttribute('cy', y(ty[j])); c0.setAttribute('cx', x(j)); c0.setAttribute('cy', y(ly[j]));
+      showTip(ev, tipRows(mLabel(idx[j]), [['Idei', fullV(k, ty[j])], ['Előző év', fullV(k, ly[j])], ['Változás', pct(ty[j] / ly[j] - 1)]]) + (interactive ? '<div class="r" style="margin-top:4px;color:var(--fg-3)">Kattints az időszakváltáshoz</div>' : ''));
+    });
+    hit.addEventListener('pointerleave', () => { cross.style.display = 'none'; hideTip(); });
+    if (interactive) hit.addEventListener('click', (ev) => { const j = near(ev); if (idx[j] >= NM - 12) { st.p = idx[j]; hideTip(); render(); toast('Időszak: ' + mLabel(st.p)); } });
+  }
+  function renderTrend() {
+    $('trend-title').textContent = METRICS[st.metric].name + ', utolsó 12 hónap';
+    drawTrend($('trend'), selStores(), selSizes(), st.metric, 260, true);
+  }
+
+  // ---------- Forgalmi híd ----------
+  function drawBridge(host, a0, a1, H) {
+    host.innerHTML = '';
+    const W = Math.max(280, host.clientWidth || 500), m = { l: 8, r: 8, t: 26, b: 34 };
+    const e = bridge(a0, a1);
+    const steps = [
+      { n: 'Előző év', v: e.R0, tot: true, c: 'var(--ly)' },
+      { n: 'Vásárlásszám', v: e.trx }, { n: 'Tétel / kosár', v: e.ipt }, { n: 'Átlagár', v: e.price },
+      { n: 'Idei', v: e.R1, tot: true, c: 'var(--accent)' }
+    ];
+    let run = 0; const lv = [];
+    steps.forEach((s) => { if (s.tot) { s.a = 0; s.b = s.v; run = s.v; } else { s.a = run; s.b = run + s.v; run = s.b; } lv.push(s.a, s.b); });
+    const levels = lv.filter((v) => v > 0); const mn = Math.min(...levels), mx = Math.max(...levels), span = (mx - mn) || mx * 0.05;
+    const lo = Math.max(0, mn - span * 1.4), hi = mx + span * 0.35;
+    const y = (v) => m.t + (H - m.t - m.b) * (1 - (Math.max(v, lo) - lo) / (hi - lo));
+    const band = (W - m.l - m.r) / steps.length, bw = Math.min(70, band * 0.58);
+    const svg = S('svg', { viewBox: `0 0 ${W} ${H}`, height: H, role: 'img', 'aria-label': 'Forgalmi híd' }, host);
+    S('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: 'grid-l' }, svg);
+    steps.forEach((s, j) => {
+      const cx = m.l + band * j + band / 2, top = y(Math.max(s.a, s.b)), bot = y(Math.min(s.a, s.b));
+      const fill = s.tot ? s.c : s.v >= 0 ? 'var(--pos)' : 'var(--neg)';
+      if (j < steps.length - 1) { const nx = m.l + band * (j + 1) + band / 2; S('line', { x1: cx + bw / 2, x2: nx - bw / 2, y1: y(s.b), y2: y(s.b), stroke: 'var(--line-2)', 'stroke-dasharray': '3 3' }, svg); }
+      S('rect', { x: cx - bw / 2, y: top, width: bw, height: Math.max(2, bot - top), rx: 4, fill }, svg);
+      const t = S('text', { x: cx, y: top - 8, 'text-anchor': 'middle', class: 'lbl', style: 'fill:var(--fg);font-weight:600' }, svg);
+      t.textContent = s.tot ? nf(1).format(s.v / 1e6) : smft(s.v);
+      const n = S('text', { x: cx, y: H - 12, 'text-anchor': 'middle', class: 'lbl', style: 'font-family:var(--font-ui)' }, svg); n.textContent = s.n;
+      const hit = S('rect', { x: cx - band / 2, y: 0, width: band, height: H, fill: 'transparent', style: 'cursor:pointer' }, svg);
+      hit.addEventListener('pointermove', (ev) => showTip(ev, s.tot ? tipRows(s.n, [['Forgalom', nf(1).format(s.v / 1e6) + ' M Ft']]) : tipRows(s.n + ' hatása', [['Hatás', smft(s.v) + ' M Ft'], ['A teljes változás', pct(s.v / (e.R1 - e.R0 || 1), 0).replace('+', '')]])));
+      hit.addEventListener('pointerleave', hideTip);
+      hit.addEventListener('click', () => { hideTip(); openInsp({ type: 'bridge' }); });
+    });
+  }
+  function renderBridge() {
+    const ss = selStores(), sz = selSizes();
+    drawBridge($('bridge'), agg(ss, sz, st.p - 12), agg(ss, sz, st.p), 250);
+  }
+
+  // ---------- Mix ----------
+  function mixRows(host, stores, compact) {
+    host.innerHTML = '';
+    const sz = [0, 1, 2, 3, 4];
+    const per = (i) => sz.map((b) => agg(stores, [b], i));
+    const p1 = per(st.p), p0 = per(st.p - 12);
+    const share = (arr, key) => { const t = arr.reduce((s, a) => s + a[key], 0); return arr.map((a) => a[key] / t); };
+    const rows = [
+      ['Vásárlások', 'Előző év', share(p0, 'trx')], ['', 'Idei', share(p1, 'trx')], null,
+      ['Forgalom', 'Előző év', share(p0, 'rev')], ['', 'Idei', share(p1, 'rev')]
+    ];
+    rows.forEach((r, ri) => {
+      if (!r) { const s = document.createElement('div'); s.className = 'mix-sep'; host.appendChild(s); return; }
+      const row = document.createElement('div'); row.className = 'mix-row';
+      row.innerHTML = `<div class="rl">${r[0] ? '<b>' + r[0] + '</b>' : ''}${r[1]}</div><div class="stack"></div>`;
+      const stk = row.querySelector('.stack');
+      r[2].forEach((v, b) => {
+        const btn = document.createElement('button'); btn.type = 'button';
+        btn.style.flex = String(Math.max(v, 0.0001)); btn.style.background = sizeColor(b); btn.style.color = `var(--on-s${b + 1})`;
+        btn.style.opacity = st.sizes[b] ? 1 : 0.35;
+        btn.textContent = v >= (compact ? 0.12 : 0.07) ? nf(0).format(v * 100) + '%' : '';
+        btn.setAttribute('aria-label', `${SIZES[b]}: ${nf(1).format(v * 100)}%`);
+        const other = ri < 3 ? rows[ri === 0 ? 1 : 0][2][b] : rows[ri === 3 ? 4 : 3][2][b];
+        btn.addEventListener('pointermove', (ev) => showTip(ev, tipRows(`${SIZES[b]} kosár (${SIZE_DESC[b]})`, [[(r[0] || rows[ri - 1][0]) + ', ' + r[1].toLowerCase(), nf(1).format(v * 100) + '%'], [ri % 3 === 0 ? 'Idei' : 'Előző év', nf(1).format(other * 100) + '%']])));
+        btn.addEventListener('pointerleave', hideTip);
+        btn.addEventListener('click', () => { hideTip(); openInsp({ type: 'size', b }); });
+        stk.appendChild(btn);
+      });
+      host.appendChild(row);
+    });
+  }
+  function renderMix() {
+    mixRows($('mix'), selStores(), false);
+    $('mix-legend').innerHTML = SIZES.map((s, b) => `<span><i class="box" style="background:${sizeColor(b)}"></i>${s} <span style="color:var(--fg-3)">${SIZE_DESC[b]}</span></span>`).join('');
+  }
+
+  // ---------- Hőtérkép ----------
+  function renderHeat() {
+    const k = st.metric; $('heat-title').textContent = 'Régió × kosárméret: ' + METRICS[k].name.toLowerCase();
+    const h = $('heat'); h.innerHTML = '';
+    const head = ['Régió'].concat(SIZES.map((s, b) => s + ' · ' + SIZE_DESC[b].replace(' tétel', '')), ['Összes']);
+    head.forEach((t, i) => { const d = document.createElement('div'); d.className = 'hh' + (i ? '' : ' l'); d.textContent = t; h.appendChild(d); });
+    const regs = REGIONS.map((r, i) => i).concat([-1]);
+    regs.forEach((ri) => {
+      const stores = selStores({ region: ri, store: -1 });
+      const rh = document.createElement('div'); rh.className = 'rh' + (ri < 0 ? ' tot' : ''); rh.textContent = ri < 0 ? 'Összes régió' : REGIONS[ri];
+      if (st.region >= 0 && st.region === ri) rh.style.color = 'var(--accent-ink)';
+      h.appendChild(rh);
+      [0, 1, 2, 3, 4, -1].forEach((b) => {
+        const sizes = b < 0 ? selSizes() : [b];
+        const c = document.createElement('button'); c.type = 'button'; c.className = 'cell';
+        if (!stores.length) { c.disabled = true; c.textContent = '–'; c.style.background = 'var(--panel-2)'; c.style.color = 'var(--fg-3)'; h.appendChild(c); return; }
+        const a1 = agg(stores, sizes, st.p), a0 = agg(stores, sizes, st.p - 12), d = yoy(a1, a0, k);
+        const col = divColor(d); c.style.background = col.bg; c.style.color = col.fg; c.textContent = pct(d);
+        if (b >= 0 && !st.sizes[b]) c.style.opacity = 0.35;
+        if (ri < 0 || b < 0) c.style.fontWeight = '700';
+        c.addEventListener('pointermove', (ev) => showTip(ev, tipRows(`${ri < 0 ? 'Összes régió' : REGIONS[ri]} · ${b < 0 ? 'összes kosár' : SIZES[b] + ' kosár'}`, [[METRICS[k].name, fullV(k, METRICS[k].v(a1))], ['Előző év', fullV(k, METRICS[k].v(a0))], ['Változás', pct(d)], ['Áruház', String(stores.length)]])));
+        c.addEventListener('pointerleave', hideTip);
+        c.addEventListener('click', () => { hideTip(); openInsp({ type: 'cell', r: ri, b }); });
+        h.appendChild(c);
+      });
+    });
+  }
+
+  // ---------- Áruháztábla ----------
+  function storeStats() {
+    const sz = selSizes(), k = st.metric;
+    const rows = selStores().map((s) => {
+      const a1 = agg([s], sz, st.p), a0 = agg([s], sz, st.p - 12);
+      const mix = [0, 1, 2, 3, 4].map((b) => agg([s], [b], st.p).trx);
+      const spark = []; for (let i = st.p - 11; i <= st.p; i++) spark.push(METRICS[k].v(agg([s], sz, i)));
+      return { s: STORES[s], a1, a0, val: METRICS[k].v(a1), yoy: yoy(a1, a0, k), trxYoy: yoy(a1, a0, 'trx'), mix, spark };
+    });
+    const ys = rows.map((r) => r.trxYoy), mean = ys.reduce((a, b) => a + b, 0) / (ys.length || 1);
+    const sd = Math.sqrt(ys.reduce((a, b) => a + (b - mean) * (b - mean), 0) / (ys.length || 1)) || 1;
+    rows.forEach((r) => { r.z = (r.trxYoy - mean) / sd; r.flag = rows.length > 3 && r.z < -1.6 ? 'crit' : rows.length > 3 && r.z > 1.6 ? 'good' : 'ok'; });
+    return rows;
+  }
+  function renderTable() {
+    const k = st.metric, M = METRICS[k], rows = storeStats();
+    const cols = [
+      { k: 'name', t: 'Áruház', s: (r) => r.s.name },
+      { k: 'val', t: M.name + ' (' + M.u + ')', s: (r) => r.val, r: true },
+      { k: 'yoy', t: 'Változás', s: (r) => r.yoy, r: true },
+      { k: 'trend', t: '12 hónap' },
+      { k: 'mix', t: 'Kosármix' },
+      { k: 'rev', t: 'Forgalom (M Ft)', s: (r) => r.a1.rev, r: true, data: true },
+      { k: 'trx', t: 'Vásárlás (e)', s: (r) => r.a1.trx, r: true, data: true },
+      { k: 'ipt', t: 'Tétel/kosár', s: (r) => r.a1.items / r.a1.trx, r: true, data: true },
+      { k: 'flag', t: 'Jelzés', s: (r) => r.z }
+    ];
+    const sc = cols.find((c) => c.k === st.sort.k) || cols[2];
+    rows.sort((a, b) => { const x = sc.s(a), y = sc.s(b); return (typeof x === 'string' ? x.localeCompare(y, 'hu') : x - y) * st.sort.dir; });
+    const maxAbs = Math.max(0.02, ...rows.map((r) => Math.abs(r.yoy)));
+    const t = $('tbl');
+    t.innerHTML = '<thead><tr>' + cols.map((c) => `<th class="${c.r ? 'r ' : ''}${c.data ? 'col-data' : ''}" ${c.s ? `aria-sort="${st.sort.k === c.k ? (st.sort.dir > 0 ? 'ascending' : 'descending') : 'none'}"` : ''}>${c.s ? `<button type="button" data-sort="${c.k}">${c.t}</button>` : c.t}</th>`).join('') + '</tr></thead>';
+    const tb = document.createElement('tbody');
+    rows.forEach((r) => {
+      const tr = document.createElement('tr'); tr.tabIndex = 0;
+      if (st.insp && st.insp.type === 'store' && st.insp.s === r.s.i) tr.className = 'sel';
+      const w = (Math.abs(r.yoy) / maxAbs) * 50;
+      tr.innerHTML = `<td><b>${r.s.name}</b> <span class="sub">${r.s.id} · ${FORMATS[r.s.f]} · ${REGIONS[r.s.r]}</span></td>
+        <td class="r num">${M.f(r.val)}</td>
+        <td class="r"><div style="display:flex;align-items:center;gap:10px;justify-content:flex-end"><span class="num" style="min-width:56px">${pct(r.yoy)}</span><div class="dbar"><span style="${r.yoy >= 0 ? 'left:50%' : 'right:50%'};width:${w}%;background:${r.yoy >= 0 ? 'var(--pos)' : 'var(--neg)'}"></span></div></div></td>
+        <td><svg width="96" height="24" viewBox="0 0 96 24"></svg></td>
+        <td><div class="mini-mix">${r.mix.map((v, b) => `<span style="flex:${v};background:${sizeColor(b)}"></span>`).join('')}</div></td>
+        <td class="r num col-data">${nf(1).format(r.a1.rev / 1e6)}</td>
+        <td class="r num col-data">${nf(1).format(r.a1.trx / 1000)}</td>
+        <td class="r num col-data">${nf(2).format(r.a1.items / r.a1.trx)}</td>
+        <td>${r.flag === 'crit' ? '<span class="pill crit">▼ Figyelendő</span>' : r.flag === 'good' ? '<span class="pill good">▲ Kiemelkedő</span>' : '<span class="pill ok">Rendben</span>'}</td>`;
+      sparkline(tr.querySelector('svg'), r.spark, 96, 24, r.yoy >= 0 ? 'var(--pos)' : 'var(--neg)');
+      const open = () => openInsp({ type: 'store', s: r.s.i });
+      tr.addEventListener('click', open); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') open(); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    t.querySelectorAll('[data-sort]').forEach((b) => b.addEventListener('click', () => { const kk = b.dataset.sort; st.sort = { k: kk, dir: st.sort.k === kk ? -st.sort.dir : (kk === 'name' ? 1 : -1) }; renderTable(); }));
+    $('tbl-legend').innerHTML = '<span><span class="pill crit">▼ Figyelendő</span> a vásárlásszám-változás jóval a többi bolt alatt</span>';
+    const nCrit = rows.filter((r) => r.flag === 'crit').length;
+    $('alert-badge').textContent = nCrit; $('alert-badge').hidden = !nCrit;
+    return rows;
+  }
+
+  // ---------- Összefoglaló ----------
+  function renderStory() {
+    const ss = selStores(), sz = selSizes(), k = st.metric, M = METRICS[k];
+    const a1 = agg(ss, sz, st.p), a0 = agg(ss, sz, st.p - 12), e = bridge(a0, a1);
+    const parts = [['Vásárlásszám', e.trx], ['Tétel / kosár', e.ipt], ['Átlagár', e.price]].sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]));
+    const all = [0, 1, 2, 3, 4];
+    const xl1 = agg(ss, [4], st.p).trx / agg(ss, all, st.p).trx, xl0 = agg(ss, [4], st.p - 12).trx / agg(ss, all, st.p - 12).trx;
+    const rows = storeStats().sort((x, y) => x.trxYoy - y.trxYoy);
+    const worst = rows[0], best = rows[rows.length - 1];
+    $('story-title').textContent = 'Mi történt ' + MN[mDate(st.p).getMonth()] + 'ban?';
+    const li = [];
+    li.push(`<li><span class="ic">${yoy(a1, a0, k) >= 0 ? '↗' : '↘'}</span><span>A(z) <b>${M.name.toLowerCase()}</b> ${fullV(k, M.v(a1))}, ez <b>${pct(yoy(a1, a0, k))}</b> az előző év azonos hónapjához képest.</span></li>`);
+    li.push(`<li><span class="ic">Σ</span><span>A forgalom <b>${smft(e.R1 - e.R0)} M Ft</b>-tal változott. A legnagyobb hatás: <b>${parts[0][0].toLowerCase()}</b> (${smft(parts[0][1])} M Ft), utána ${parts[1][0].toLowerCase()} (${smft(parts[1][1])} M Ft). <button class="link" type="button" data-act="bridge">Hatásbontás</button></span></li>`);
+    li.push(`<li><span class="ic">XL</span><span>A nagy (21+ tételes) kosarak aránya a vásárlásokon belül <b>${nf(1).format(xl0 * 100)}% → ${nf(1).format(xl1 * 100)}%</b>. <button class="link" type="button" data-act="size4">XL kosarak részletei</button></span></li>`);
+    if (rows.length > 1 && worst.flag === 'crit') li.push(`<li><span class="ic crit">!</span><span><b>${worst.s.name}</b>: a vásárlásszám ${pct(worst.trxYoy)}, ez jóval a hálózati átlag alatt van. <button class="link" type="button" data-act="s${worst.s.i}">Megnyitás</button></span></li>`);
+    else if (rows.length > 1) li.push(`<li><span class="ic">★</span><span>Legjobb vásárlásszám-változás: <b>${best.s.name}</b> (${pct(best.trxYoy)}). <button class="link" type="button" data-act="s${best.s.i}">Megnyitás</button></span></li>`);
+    const ul = $('story'); ul.innerHTML = li.join('');
+    ul.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', () => {
+      const a = b.dataset.act; if (a === 'bridge') openInsp({ type: 'bridge' }); else if (a === 'size4') openInsp({ type: 'size', b: 4 }); else openInsp({ type: 'store', s: +a.slice(1) });
+    }));
+    $('ask-btn').textContent = `Kérdezz rá: „Miért változott a(z) ${M.name.toLowerCase()}?”`;
+  }
+
+  // ---------- Adat szint ----------
+  function renderRaw() {
+    const ss = selStores(), sz = selSizes(), out = [];
+    [st.p, st.p - 12].forEach((i) => ss.forEach((s) => sz.forEach((b) => { const k = ((s * NM + i) * NB + b) * 3; out.push([mKey(i), STORES[s], SIZES[b], D[k], D[k + 1], D[k + 2]]); })));
+    out.sort((a, b) => b[5] - a[5]);
+    const show = out.slice(0, 60);
+    $('raw-sub').textContent = `fact_basket_monthly · ${nf(0).format(out.length)} sor a nézetben, ebből az első ${show.length} látszik.`;
+    $('raw').innerHTML = '<thead><tr><th>period</th><th>store_id</th><th>store</th><th>basket_size</th><th class="r">transactions</th><th class="r">items</th><th class="r">revenue_huf</th></tr></thead><tbody>' +
+      show.map((r) => `<tr><td class="num">${r[0]}</td><td class="num">${r[1].id}</td><td>${r[1].name}</td><td>${r[2]}</td><td class="r num">${nf(0).format(r[3])}</td><td class="r num">${nf(0).format(r[4])}</td><td class="r num">${nf(0).format(r[5])}</td></tr>`).join('') + '</tbody>';
+    const q = (arr) => arr.map((x) => `'${x}'`).join(', ');
+    const where = [`period IN (${q([mKey(st.p), mKey(st.p - 12)])})`];
+    if (st.store >= 0) where.push(`store_id = '${STORES[st.store].id}'`);
+    else {
+      if (st.formats.some((x) => !x)) where.push(`format IN (${q(FORMATS.filter((f, i) => st.formats[i]))})`);
+      if (st.region >= 0) where.push(`region = '${REGIONS[st.region]}'`);
+    }
+    if (st.sizes.some((x) => !x)) where.push(`basket_size IN (${q(SIZES.filter((s, i) => st.sizes[i]))})`);
+    const sql = `SELECT period, basket_size,\n       SUM(revenue_huf)  AS revenue,\n       SUM(transactions) AS trx,\n       SUM(items)        AS items\nFROM   fact_basket_monthly\nWHERE  ${where.join('\n  AND  ')}\nGROUP  BY period, basket_size;`;
+    $('sql').dataset.raw = sql;
+    $('sql').innerHTML = esc(sql).replace(/\b(SELECT|FROM|WHERE|AND|IN|AS|GROUP|BY|SUM)\b/g, '<span class="k">$1</span>');
+    $('defs').innerHTML = MKEYS.map((k) => `<div><dt>${METRICS[k].name} <span style="color:var(--fg-3);font-weight:500">(${METRICS[k].u})</span></dt><dd>${METRICS[k].def}</dd><dd><code>${METRICS[k].formula}</code></dd></div>`).join('');
+  }
+
+  // ---------- Részletező panel ----------
+  function metricRows(stores, sizes) {
+    const a1 = agg(stores, sizes, st.p), a0 = agg(stores, sizes, st.p - 12);
+    return '<div class="mrows">' + MKEYS.map((k) => `<button type="button" class="mrow" data-m="${k}" aria-pressed="${st.metric === k}"><span>${METRICS[k].name}</span><span class="num">${fullV(k, METRICS[k].v(a1))}</span>${deltaPill(yoy(a1, a0, k))}</button>`).join('') + '</div>';
+  }
+  function effectBlock(stores, sizes) {
+    const e = bridge(agg(stores, sizes, st.p - 12), agg(stores, sizes, st.p));
+    const row = (n, v) => `<span>${n}</span><span class="num ${v >= 0 ? 'pos-t' : 'neg-t'}">${smft(v)} M Ft</span>`;
+    return `<div class="eff">${row('Vásárlásszám', e.trx)}${row('Tétel / kosár', e.ipt)}${row('Átlagár', e.price)}<span style="font-weight:600">Összesen</span><span class="num" style="font-weight:600">${smft(e.R1 - e.R0)} M Ft</span></div>`;
+  }
+  function noteBlock(key) {
+    return `<section><h4>Jegyzet</h4><textarea id="note" data-key="${key}" placeholder="Saját megjegyzés ehhez a nézethez. Csak ebben a böngészőben marad meg.">${esc(store.get('note.' + key, ''))}</textarea></section>`;
+  }
+  function openInsp(spec) { st.insp = spec; renderInsp(); renderTable(); }
+  function closeInsp() { st.insp = null; $('insp').hidden = true; $('app').classList.remove('has-insp'); renderTable(); requestAnimationFrame(renderCharts); }
+  function renderInsp() {
+    const el = $('insp'), s = st.insp; if (!s) return;
+    const wasHidden = el.hidden; el.hidden = false; $('app').classList.add('has-insp');
+    let eyebrow = '', title = '', body = '', stores = selStores(), sizes = selSizes(), apply = null, noteKey = '';
+    if (s.type === 'store') {
+      const S0 = STORES[s.s]; stores = [s.s];
+      eyebrow = `Áruház · ${S0.id}`; title = S0.name; noteKey = 'store' + s.s;
+      body = `<div class="legend"><span>${FORMATS[S0.f]}</span><span>${REGIONS[S0.r]}</span></div>`;
+      apply = () => { st.store = s.s; st.region = S0.r; render(); toast('Szűrve: ' + S0.name); };
+    } else if (s.type === 'cell') {
+      if (s.r >= 0) stores = selStores({ region: s.r, store: -1 }); else stores = selStores({ store: -1 });
+      if (s.b >= 0) sizes = [s.b];
+      eyebrow = 'Régió × kosárméret'; title = `${s.r < 0 ? 'Összes régió' : REGIONS[s.r]} · ${s.b < 0 ? 'összes kosár' : SIZES[s.b] + ' kosár'}`; noteKey = 'cell' + s.r + '_' + s.b;
+      apply = () => { st.region = s.r; st.store = -1; if (s.b >= 0) st.sizes = st.sizes.map((x, i) => i === s.b); render(); toast('Szűrő alkalmazva'); };
+    } else if (s.type === 'size') {
+      sizes = [s.b]; eyebrow = 'Kosárméret'; title = `${SIZES[s.b]} kosár, ${SIZE_DESC[s.b]}`; noteKey = 'size' + s.b;
+      apply = () => { st.sizes = st.sizes.map((x, i) => i === s.b); render(); toast('Szűrve: ' + SIZES[s.b] + ' kosár'); };
+    } else if (s.type === 'bridge') {
+      eyebrow = 'Hatásbontás'; title = 'Forgalomváltozás kosárméretenként'; noteKey = 'bridge';
+    } else if (s.type === 'metric') {
+      const M = METRICS[s.k]; eyebrow = 'Mutató definíció'; title = M.name; noteKey = 'metric' + s.k;
+    } else if (s.type === 'answer') {
+      eyebrow = 'Válasz a kérdésedre'; title = '„' + s.q + '”'; noteKey = 'answer';
+    }
+    let html = `<div class="insp-h"><div><div class="eyebrow">${esc(eyebrow)}</div><h3>${esc(title)}</h3></div><button type="button" class="x" id="insp-x" aria-label="Bezárás">✕</button></div>`;
+    html += body;
+    if (s.type === 'metric') {
+      const M = METRICS[s.k];
+      html += `<section><h4>Leírás</h4><p style="margin:0">${M.def}</p></section>
+        <section><h4>Számítás</h4><pre class="sql">${esc(M.formula)}</pre></section>
+        <section><h4>Forrás</h4><dl class="defs"><div><dt>Tábla</dt><dd><code>dwh.fact_basket_monthly</code></dd></div><div><dt>Frissítés</dt><dd>Naponta 06:00-kor, a lezárt napokra</dd></div><div><dt>Felelős</dt><dd>Kereskedelmi elemzés csapat</dd></div></dl></section>
+        <div class="actions"><button class="btn primary" type="button" data-do="metric">Ez legyen a fő mutató</button></div>`;
+    } else if (s.type === 'bridge') {
+      const rows = [0, 1, 2, 3, 4].map((b) => ({ b, e: bridge(agg(stores, [b], st.p - 12), agg(stores, [b], st.p)) }));
+      html += `<section><h4>Hogyan olvasd?</h4><p style="margin:0;font-size:13px;color:var(--fg-2)">A három hatás összege kiadja a teljes forgalomváltozást (logaritmikus, sorrendfüggetlen bontás). Kosárméretenként külön bontva látszik, hol keletkezik a változás.</p></section>
+        <section><h4>Kosárméretenként, M Ft</h4><div class="tbl-wrap"><table class="tbl" style="min-width:0"><thead><tr><th>Méret</th><th class="r">Vásárlás</th><th class="r">Tétel</th><th class="r">Ár</th><th class="r">Össz.</th></tr></thead><tbody>` +
+        rows.map((r) => `<tr data-b="${r.b}"><td><span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:3px;background:${sizeColor(r.b)};margin-right:6px"></span>${SIZES[r.b]}</td>${[r.e.trx, r.e.ipt, r.e.price, r.e.R1 - r.e.R0].map((v) => `<td class="r num ${v >= 0 ? 'pos-t' : 'neg-t'}">${smft(v)}</td>`).join('')}</tr>`).join('') +
+        `</tbody></table></div><p class="note">A sorra kattintva megnyílik az adott kosárméret.</p></section>`;
+    } else if (s.type === 'answer') {
+      html += s.html;
+    }
+    if (['store', 'cell', 'size', 'answer'].includes(s.type)) {
+      html += `<section><h4>Mutatók · ${esc(mLabel(st.p))}</h4>${metricRows(stores, sizes)}</section>
+        <section><h4>${esc(METRICS[st.metric].name)}, 12 hónap</h4><div class="chart" id="insp-trend"></div><div class="legend"><span><i></i>Idei</span><span><i class="ly"></i>Előző év</span></div></section>`;
+      if (s.type !== 'size' && !(s.type === 'cell' && s.b >= 0)) html += `<section><h4>Kosárméret-mix</h4><div class="mix" id="insp-mix"></div></section>`;
+      html += `<section><h4>Mi mozgatta a forgalmat?</h4>${effectBlock(stores, sizes)}</section>`;
+      if (s.type === 'cell' || s.type === 'size') {
+        const list = stores.map((i) => { const a1 = agg([i], sizes, st.p), a0 = agg([i], sizes, st.p - 12); return { i, d: yoy(a1, a0, st.metric) }; }).sort((a, b) => a.d - b.d);
+        const pick = list.length > 6 ? list.slice(0, 3).concat(list.slice(-3)) : list;
+        html += `<section><h4>Áruházak ${list.length > 6 ? '(3 leggyengébb, 3 legerősebb)' : ''}</h4><div class="mrows">` + pick.map((x) => `<button type="button" class="mrow" data-store="${x.i}"><span>${STORES[x.i].name}</span><span class="sub" style="color:var(--fg-3);font-size:12px">${FORMATS[STORES[x.i].f]}</span>${deltaPill(x.d)}</button>`).join('') + '</div></section>';
+      }
+    }
+    if (s.type !== 'metric') html += noteBlock(noteKey);
+    const acts = [];
+    if (apply) acts.push('<button class="btn primary" type="button" data-do="apply">Szűrés erre</button>');
+    if (s.type !== 'metric') acts.push('<button class="btn" type="button" data-do="alert">Riasztás beállítása</button>', '<button class="btn" type="button" data-do="pin">Rögzítés a táblámra</button>');
+    if (acts.length) html += `<div class="actions">${acts.join('')}</div>`;
+    el.innerHTML = html;
+    $('insp-x').addEventListener('click', closeInsp);
+    el.querySelectorAll('[data-m]').forEach((b) => b.addEventListener('click', () => setMetric(b.dataset.m)));
+    el.querySelectorAll('[data-store]').forEach((b) => b.addEventListener('click', () => openInsp({ type: 'store', s: +b.dataset.store })));
+    el.querySelectorAll('tr[data-b]').forEach((tr) => tr.addEventListener('click', () => openInsp({ type: 'size', b: +tr.dataset.b })));
+    el.querySelectorAll('[data-do]').forEach((b) => b.addEventListener('click', () => {
+      const d = b.dataset.do;
+      if (d === 'apply') apply();
+      else if (d === 'metric') setMetric(s.k);
+      else if (d === 'alert') toast(`Riasztás: szólunk, ha a(z) ${METRICS[st.metric].name.toLowerCase()} 3%-nál többet esik (koncepció)`);
+      else if (d === 'pin') toast('Rögzítve a tábládra (koncepció)');
+    }));
+    const note = $('note'); if (note) note.addEventListener('input', () => store.set('note.' + note.dataset.key, note.value));
+    const it = $('insp-trend'); if (it) { it._stores = stores; it._sizes = sizes; drawTrend(it, stores, sizes, st.metric, 170, false); }
+    const im = $('insp-mix'); if (im) mixRows(im, stores, true);
+    if (wasHidden) { requestAnimationFrame(renderCharts); el.scrollTop = 0; }
+  }
+
+  // ---------- Parancspaletta ----------
+  const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  let palItems = [], palSel = 0;
+  function commands() {
+    const c = [];
+    MKEYS.forEach((k) => c.push({ g: 'Mutatók', ic: 'ƒ', t: 'Fő mutató: ' + METRICS[k].name, run: () => setMetric(k) }));
+    [['exec', 'Vezetői'], ['analyst', 'Elemzői'], ['data', 'Adat']].forEach(([l, n], i) => c.push({ g: 'Nézet', ic: String(i + 1), t: 'Fókuszszint: ' + n, run: () => setLevel(l) }));
+    STORES.forEach((s) => c.push({ g: 'Áruházak', ic: '⌂', t: s.name, k: FORMATS[s.f] + ' · ' + REGIONS[s.r], run: () => openInsp({ type: 'store', s: s.i }) }));
+    REGIONS.forEach((r, i) => c.push({ g: 'Régiók', ic: '◎', t: 'Szűrés: ' + r, run: () => { st.region = i; st.store = -1; render(); } }));
+    FORMATS.forEach((f, i) => c.push({ g: 'Formátumok', ic: '▦', t: 'Csak ' + f, run: () => { st.formats = st.formats.map((x, j) => j === i); st.store = -1; render(); } }));
+    SIZES.forEach((s, b) => c.push({ g: 'Kosárméret', ic: s, t: s + ' kosár részletei', k: SIZE_DESC[b], run: () => openInsp({ type: 'size', b }) }));
+    c.push({ g: 'Nézet', ic: '↺', t: 'Szűrők törlése', run: resetFilters });
+    return c;
+  }
+  function answer(q) {
+    const nq = norm(q);
+    const s = STORES.find((x) => nq.includes(norm(x.name)));
+    const k = MKEYS.find((m) => nq.includes(norm(METRICS[m].name).split(' ')[0].slice(0, 6))) || st.metric;
+    const stores = s ? [s.i] : selStores(), sizes = selSizes();
+    const a1 = agg(stores, sizes, st.p), a0 = agg(stores, sizes, st.p - 12), e = bridge(a0, a1);
+    const parts = [['a vásárlásszám', e.trx], ['a tétel / kosár', e.ipt], ['az átlagár', e.price]].sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]));
+    const sizeD = [0, 1, 2, 3, 4].map((b) => ({ b, d: yoy(agg(stores, [b], st.p), agg(stores, [b], st.p - 12), 'trx') })).sort((x, y) => x.d - y.d);
+    const html = `<section><h4>Rövid válasz</h4><p style="margin:0;font-size:14px;line-height:1.55">${s ? '<b>' + s.name + '</b>: ' : ''}a(z) ${METRICS[k].name.toLowerCase()} <b>${pct(yoy(a1, a0, k))}</b> az előző évhez képest (${mLabel(st.p)}). A forgalomváltozást leginkább <b>${parts[0][0]}</b> magyarázza (${smft(parts[0][1])} M Ft). A vásárlásszám a(z) <b>${SIZES[sizeD[0].b]}</b> kosaraknál esett a legjobban (${pct(sizeD[0].d)}), a(z) <b>${SIZES[sizeD[4].b]}</b> kosaraknál nőtt a legjobban (${pct(sizeD[4].d)}).</p><p class="note">A kérdésfeldolgozás ebben a koncepcióban szimulált: a válasz a nézet adataiból, szabályalapon áll össze.</p></section>`;
+    if (k !== st.metric) { st.metric = k; store.set('metric', k); }
+    if (s) { st.insp = { type: 'store', s: s.i }; render(); toast('Válasz: ' + s.name + ' részletei'); return; }
+    st.insp = { type: 'answer', q, html }; render();
+  }
+  function openPal(q = '') { $('pal').hidden = false; const i = $('pal-q'); i.value = q; renderPal(); i.focus(); }
+  function closePal() { $('pal').hidden = true; }
+  function renderPal() {
+    const q = $('pal-q').value.trim(), nq = norm(q);
+    let items = commands().filter((c) => !nq || norm(c.t + ' ' + (c.k || '') + ' ' + c.g).includes(nq));
+    if (q.length > 2 && (q.includes('?') || q.split(/\s+/).length >= 3 || !items.length)) items.unshift({ g: 'Kérdés', ic: '✦', t: 'Kérdezd az adatokat: „' + q + '”', run: () => answer(q.replace(/\?$/, '')) });
+    if (!q) items = [{ g: 'Javasolt kérdések', ic: '✦', t: 'Miért esett Szeged?', run: () => answer('Miért esett Szeged') }, { g: 'Javasolt kérdések', ic: '✦', t: 'Mi húzza az átlagkosarat?', run: () => answer('Mi húzza az átlagkosarat') }].concat(items);
+    palItems = items.slice(0, 40); palSel = 0;
+    const list = $('pal-list'); let g = '', html = '';
+    palItems.forEach((it, i) => { if (it.g !== g) { g = it.g; html += `<div class="pal-grp">${esc(g)}</div>`; } html += `<button type="button" class="pal-it" role="option" data-i="${i}" aria-selected="${i === palSel}"><span class="ico">${esc(it.ic)}</span>${esc(it.t)}${it.k ? `<span class="k">${esc(it.k)}</span>` : ''}</button>`; });
+    list.innerHTML = html || '<div class="pal-grp">Nincs találat</div>';
+    list.querySelectorAll('.pal-it').forEach((b) => { b.addEventListener('click', () => runPal(+b.dataset.i)); b.addEventListener('pointermove', () => markPal(+b.dataset.i)); });
+  }
+  function markPal(i) { palSel = i; document.querySelectorAll('.pal-it').forEach((b) => b.setAttribute('aria-selected', +b.dataset.i === i)); const cur = document.querySelector(`.pal-it[data-i="${i}"]`); if (cur) cur.scrollIntoView({ block: 'nearest' }); }
+  function runPal(i) { const it = palItems[i]; if (!it) return; closePal(); it.run(); }
+
+  // ---------- Szint ----------
+  function setLevel(l) {
+    st.level = l; store.set('level', l); $('app').dataset.level = l;
+    document.querySelectorAll('.levels button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.level === l));
+    requestAnimationFrame(renderCharts);
+  }
+
+  // ---------- Fő renderelés ----------
+  function renderCharts() { renderTrend(); renderBridge(); if (st.insp) { const it = $('insp-trend'); if (it) drawTrend(it, it._stores || selStores(), it._sizes || selSizes(), st.metric, 170, false); } }
+  function render() {
+    syncFilters(); renderCrumbs(); renderKpis(); renderStory(); renderTrend(); renderBridge(); renderMix(); renderHeat(); renderTable(); renderRaw();
+    if (st.insp) renderInsp();
+  }
+
+  // ---------- Események ----------
+  buildFilters();
+  setLevel(st.level);
+  document.querySelectorAll('.levels button').forEach((b) => b.addEventListener('click', () => setLevel(b.dataset.level)));
+  $('cmd-open').addEventListener('click', () => openPal());
+  $('pal-q').addEventListener('input', renderPal);
+  $('pal').addEventListener('click', (e) => { if (e.target === $('pal')) closePal(); });
+  $('pal-q').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); markPal(Math.min(palItems.length - 1, palSel + 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); markPal(Math.max(0, palSel - 1)); }
+    else if (e.key === 'Enter') { e.preventDefault(); runPal(palSel); }
+  });
+  $('ask-btn').addEventListener('click', () => answer('Miért változott a(z) ' + METRICS[st.metric].name.toLowerCase()));
+  $('bridge-more').addEventListener('click', () => openInsp({ type: 'bridge' }));
+  $('scrim').addEventListener('click', closeInsp);
+  $('sql-copy').addEventListener('click', () => {
+    const txt = $('sql').dataset.raw;
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($('sql')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Kijelöltem, másold Ctrl+C-vel'); };
+    try { navigator.clipboard.writeText(txt).then(() => toast('SQL a vágólapon'), fallback); } catch (e) { fallback(); }
+  });
+  document.querySelectorAll('.rail-btn[data-go]').forEach((b) => b.addEventListener('click', () => {
+    const go = b.dataset.go;
+    document.querySelectorAll('.rail-btn').forEach((x) => x.removeAttribute('aria-current')); b.setAttribute('aria-current', 'page');
+    if (go === 'alerts') {
+      const rows = storeStats().filter((r) => r.flag === 'crit');
+      if (rows.length) openInsp({ type: 'store', s: rows[0].s.i }); else toast('Nincs aktív riasztás ebben a nézetben');
+      return;
+    }
+    if ((go === 'c-heat' || go === 'c-table') && st.level === 'exec') setLevel('analyst');
+    if (go === 'c-sem') setLevel('data');
+    const t = $(go); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  document.addEventListener('keydown', (e) => {
+    const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('pal').hidden ? openPal() : closePal(); return; }
+    if (e.key === 'Escape') { if (!$('pal').hidden) closePal(); else if (st.insp) closeInsp(); return; }
+    if (typing || !$('pal').hidden) return;
+    if (e.key === '/') { e.preventDefault(); openPal(); }
+    if (e.key === '1') setLevel('exec'); if (e.key === '2') setLevel('analyst'); if (e.key === '3') setLevel('data');
+  });
+  let rz; const ro = new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(renderCharts, 80); });
+  ro.observe($('trend'));
+  render();
+})();
+</script>
+</body>
+</html>
